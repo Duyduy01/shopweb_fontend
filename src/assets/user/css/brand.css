@@ -1,0 +1,47 @@
+/* label-brand */
+.label-brand {
+    font-size: 18px;
+    padding: .5rem 1.5rem;
+}
+
+.label-brand>img {
+    width: 2rem;
+    height: 2rem;
+    object-fit: contain;
+}
+
+.label-brand-active {
+    border-bottom: 2px solid black !important;
+}
+
+.label-brand:hover {
+    border-bottom: 2px solid black !important;
+}
+
+/* brand-cate-main */
+.brand-cate-main {
+    margin: 2rem 6rem;
+}
+
+.brand-list-product{
+    margin: 2rem 0;
+}
+
+.brand-cate-child {
+    margin-top: .5rem;
+}
+
+.brand-cate-child>label {
+    font-weight: 400 !important;
+    font-size: 16px;
+}
+
+.brand-cate-child:hover>label {
+    border-bottom: 2px solid black ;
+    font-weight: 400 ;
+    font-size: 16px;
+}
+
+.brand-cate-child-active {
+    border-bottom: 2px solid black !important;
+}

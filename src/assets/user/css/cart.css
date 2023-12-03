@@ -1,0 +1,32 @@
+/* product-img */
+.product-img{
+    width: 5rem;
+    height: 7rem;
+    object-fit:contain
+    
+}
+.table td, .table th{
+    vertical-align: middle;
+}
+
+.product{
+    background-color:#f9f9f9
+}
+
+/* product-bill */
+.product-bill{
+    background-color:#f9f9f9;
+    margin-left: 1rem;
+}
+/* .header{
+    padding: 2rem;
+} */
+
+/* button */
+.button-cart{
+    height: 3rem;
+}
+
+.noQuantity{
+   background-color:rgba(169, 163, 163, 0.408)
+}

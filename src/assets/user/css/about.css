@@ -1,0 +1,44 @@
+
+.section-one{
+    background-color: #fff;
+    padding: 4rem 0;
+}
+.section-two{
+    background-color: #f7f7f7;
+    padding: 4rem 0;
+}
+
+.about-main img {
+    position: relative;
+    z-index: 5;
+    max-width: 100%;
+    padding: .5rem;
+}
+
+.info-article__image:after {
+    background: #fc0d1b;
+    content: "";
+    display: block;
+    max-width: 476px;
+    max-height: 476px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 75%;
+    height: 85%;
+    z-index: 1;
+}
+
+.hr--accent {
+    border: 0;
+    border-top: 2px solid #ff2600;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    width: 50px;
+}
+
+.about-title{
+    font-weight: 600;
+    font-size: 16px;
+}

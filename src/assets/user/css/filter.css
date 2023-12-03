@@ -1,0 +1,83 @@
+.m-filter-main{
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.m-filter-main h5{
+    font-weight: bold;
+  background-color: black;
+  padding: 1rem 0;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* header */
+.m-filter-header{
+    width: 100%;
+    padding: 0 0 2rem 0;
+}
+.m-filter-header>h4{
+    text-align: center;
+    font-weight: bold;
+}
+/*  */
+.m-filter-padding{
+    margin: 1rem 0;
+}
+
+/* cate */
+.m-filter-obj{
+    margin: 1rem 0;
+}
+
+.m-filter-obj>label{
+
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    background-color: #fff;
+    line-height: 1.6rem;
+    text-align: center;
+    font-weight: 500 !important;
+    font-size: 0.9rem;
+ 
+}
+.m-filter-obj>label:hover{
+    width: 100%;
+    height: 100%;
+    line-height: 1.6rem;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+
+}
+
+.m-filter-obj>label.active{
+    width: 100%;
+    height: 100%;
+    line-height: 1.6rem;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    
+}
+
+/* color */
+.m-filter-color-object>label{
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid black;
+    border-radius: 4rem ;
+}
+
+.m-filter-color-object>label.active{
+    width: 3rem;
+    height: 3rem;
+    border: 5px solid thistle;
+    border-radius: 4rem ;
+}
+
+
