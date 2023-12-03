@@ -1,4 +1,4 @@
-# front_end_do_an
+# shopweb_fontend
 
 ## Project setup
 ```
