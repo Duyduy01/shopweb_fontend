@@ -179,7 +179,7 @@
               <div class="form-group col-6 text-center">
                 <label for="m-file-img" v-if="brand.id != null">
                   <img
-                    :src="brand.icon"
+                    :src="displayImage"
                     alt=""
                     srcset=""
                     height="200px"
@@ -190,7 +190,7 @@
 
                 <label for="m-file-img" v-if="brand.id == null">
                   <img
-                    src="@/assets/img/img-default.png"
+                    :src="displayImage"
                     alt=""
                     srcset=""
                     height="200px"
@@ -198,14 +198,17 @@
                     style="object-fit: contain"
                   />
                 </label>
-
                 <input
                   type="file"
                   id="m-file-img"
+                  ref="fileInput"
                   @change="addImg"
                   hidden
                   accept="image/png, image/jpeg, image/webp"
                 />
+              </div>
+              <div class="error" v-if="submitted && !brand.id && !imgChange">
+                Vui lòng chọn hình ảnh thương hiệu
               </div>
             </div>
             <div class="col-12 d-flex">
@@ -254,15 +257,29 @@
         </div>
 
         <span slot="footer" class="dialog-footer d-flex justify-content-end">
-          <button type="submit" class="btn btn-outline-primary">Áp dụng</button>
-
           <button
+            type="submit"
+            class="btn btn-outline-primary"
+            v-loading.fullscreen.lock="fullscreenLoading"
+          >
+            Áp dụng
+          </button>
+          <button
+            v-if="brand.id != null"
             type="button"
-            @click="dialogFormVisible = false"
+            @click="isDeleteBrand(brand.brandName)"
+            class="btn btn-outline-primary ml-2"
+            v-loading.fullscreen.lock="fullscreenLoading"
+          >
+            Xóa thương hiệu
+          </button>
+          <!-- <button
+            type="button"
+            @click="noUpdate()"
             class="btn btn-outline-primary ml-2"
           >
             Quay lại
-          </button>
+          </button> -->
         </span>
       </form>
     </el-dialog>
@@ -277,6 +294,7 @@ import {
   addBrand,
   editBrand,
   updateStatusBrand,
+  deleteBrand,
 } from "@/service/admin/brand.js";
 import { required } from "vuelidate/lib/validators";
 import { validationMixin } from "vuelidate";
@@ -294,7 +312,6 @@ export default {
         { name: "icon", text: "icon" },
         { name: "content", text: "Nội dung" },
         { name: "status", text: "Trạng thái" },
-
         { name: "#", text: "Hành động" },
       ],
       entries: [],
@@ -323,6 +340,7 @@ export default {
       submitted: false,
       //   thay đổi
       dialogFormVisible: false,
+      fullscreenLoading: false,
       brand: {
         id: null,
         brandName: "",
@@ -330,6 +348,8 @@ export default {
         content: "",
         icon: "",
       },
+      imgChange: null,
+      imgShow: null,
     };
   },
   validations: {
@@ -361,6 +381,15 @@ export default {
     },
     tableData() {
       return this.filteredEntries;
+    },
+    displayImage() {
+      if (this.imgChange) {
+        return this.imgShow;
+      } else if (!this.imgChange && this.brand.icon) {
+        return this.brand.icon;
+      } else {
+        return require("@/assets/img/img-default.png");
+      }
     },
   },
   created() {
@@ -442,7 +471,6 @@ export default {
     },
     // thay doi
     modalAdd() {
-      this.dialogFormVisible = true;
       this.brand = {
         id: null,
         brandName: "",
@@ -450,10 +478,14 @@ export default {
         content: "",
         icon: "",
       };
+      this.imgChange = null;
+      this.dialogFormVisible = true;
     },
     ModalEdit(brand) {
-      this.dialogFormVisible = true;
+      console.log(brand);
       this.brand = brand;
+      this.imgChange = null;
+      this.dialogFormVisible = true;
     },
 
     updateStatus(id) {
@@ -464,16 +496,27 @@ export default {
       e.preventDefault();
       this.submitted = true;
       this.$v.$touch();
-      if (this.$v.$invalid) {
+      if (this.$v.$invalid || (!this.brand.id && !this.imgChange)) {
         console.log("error validate");
       } else {
         let form = new FormData();
+
+        // Chỉ cập nhật icon nếu người dùng đã chọn ảnh mới
+        if (this.imgChange !== null) {
+          this.brand.icon = this.imgChange;
+        } else if (this.imgChange === null && this.brand.icon !== "") {
+          // Nếu không chọn ảnh mới
+          delete this.brand.icon;
+        }
 
         let listKeys = Object.keys(this.brand);
         listKeys.forEach((e) => {
           form.append(e, this.brand[e]);
         });
-
+        console.log("Form Data:");
+        for (let pair of form.entries()) {
+          console.log(pair[0] + ": " + pair[1]);
+        }
         if (this.brand.id == null) {
           form.delete("id");
           this.apiAddBrand(form);
@@ -485,6 +528,8 @@ export default {
     apiAddBrand(form) {
       let self = this;
       // let data = JSON.stringify(this.brand);
+      self.dialogFormVisible = false;
+      self.fullscreenLoading = true;
       addBrand(form)
         .then((res) => {
           this.entries.push(res.data);
@@ -498,16 +543,19 @@ export default {
             icon: "",
           };
           this.submitted = false;
+          self.fullscreenLoading = false;
         })
         .catch((err) => {
           console.log(err.response.data);
+          self.fullscreenLoading = false;
           self.$swal("Lỗi", err.response.data.data, "error");
         });
-      self.dialogFormVisible = false;
     },
     apiEditBrand(form) {
       let self = this;
       // let data = JSON.stringify(this.brand);
+      self.dialogFormVisible = false;
+      self.fullscreenLoading = true;
       editBrand(form)
         .then((res) => {
           this.brand.boolActive = res.data.boolActive;
@@ -526,21 +574,81 @@ export default {
             icon: "",
           };
           this.submitted = false;
+          self.fullscreenLoading = false;
         })
         .catch((err) => {
           console.log(err.response.data);
+          self.fullscreenLoading = false;
           self.$swal("Lỗi", err.response.data.data, "error");
         });
-      self.dialogFormVisible = false;
+    },
+    // Xóa thương hiệu
+    isDeleteBrand(brandName) {
+      let self = this;
+      (this.dialogFormVisible = false),
+        self
+          .$swal({
+            icon: "warning",
+            title: "Warning",
+            text: `Bạn có chắc muốn xóa thương hiệu ${brandName}`,
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Xóa thương hiệu",
+          })
+          .then((result) => {
+            if (result.isConfirmed) {
+              self.dialogFormVisible = false;
+              self.fullscreenLoading = true;
+              let index = self.entries.findIndex(
+                (entry) => entry.id === self.brand.id
+              );
+              if (index !== -1) {
+                deleteBrand(this.brand.id)
+                  .then((res) => {
+                    self.$delete(self.entries, index);
+                    self.paginateEntries();
+                    self.$swal({
+                      icon: "success",
+                      title: "Thành công",
+                      text: res.data,
+                      timer: 1500,
+                    });
+                    self.fullscreenLoading = false;
+                  })
+                  .catch((e) => {
+                    console.error(e);
+                    self.fullscreenLoading = false;
+                    self.$swal({
+                      icon: "error",
+                      title: "Failed",
+                      text: "Xóa thương hiệu thất bại",
+                      timer: 1500,
+                    });
+                  });
+              }
+            }
+          });
     },
     addImg(e) {
       let readerFile = new FileReader();
       let files = e.target.files;
-      this.brand.icon = files[0];
-      readerFile.readAsDataURL(files[0]);
-      readerFile.onload = function (oFREvent) {
-        document.getElementById("m-img-parent").src = oFREvent.target.result;
-      };
+      if (files.length > 0) {
+        this.imgChange = files[0];
+        readerFile.readAsDataURL(files[0]);
+        readerFile.onload = async () => {
+          this.imgShow = await readerFile.result;
+        };
+      } else {
+        return;
+      }
+      this.$refs.fileInput.value = "";
+    },
+
+    noUpdate() {
+      this.dialogFormVisible = false;
+      this.imgChange = null;
+      console.log(this.brand);
     },
   },
   mounted() {},

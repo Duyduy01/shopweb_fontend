@@ -39,7 +39,7 @@
       <table class="table table:border secondary-5:border text-center">
         <thead>
           <tr>
-            <th v-for="th in tableHeader" :key="th.name">
+            <th v-for="th in TableHeaderMain" :key="th.name">
               <div class="between:flex center:items">
                 <span>{{ th.text }}</span>
                 <span @click.prevent="sortByColumn(th.name)">
@@ -57,7 +57,6 @@
             </th>
           </tr>
           <tr>
-            <td></td>
             <td></td>
             <td>
               <input
@@ -98,14 +97,14 @@
         </thead>
         <tbody>
           <tr v-for="(td, index) in tableData" :key="td.id">
-            <td>
+            <!-- <td>
               <el-checkbox
                 v-model="td.checkSelect"
                 :label="td.checkSelect ? 'Đã chọn' : 'Chưa Chọn'"
                 
                 @change="selectProductToReceipt(td)"
               ></el-checkbox>
-            </td>
+            </td> -->
             <td>{{ index + 1 }}</td>
             <td>{{ td.productName }}</td>
             <td>{{ td.productCode }}</td>
@@ -242,7 +241,6 @@
                       <el-checkbox
                         v-model="td.checkSelect"
                         label="Đã Chọn"
-                        
                         @change="selectProductToReceipt(td)"
                       ></el-checkbox>
                     </td>
@@ -427,7 +425,7 @@ export default {
         { name: "price", text: "Giá nhập" },
         { name: "img", text: "Ảnh" },
         { name: "quantity", text: "Kho" },
-        { name: "#", text: "#" },
+        { name: "#", text: "Hành động" },
       ],
 
       entries: [],
@@ -474,6 +472,10 @@ export default {
   },
   watch: {},
   computed: {
+    TableHeaderMain() {
+      return this.tableHeader.filter((th) => th.name !== "checkSelect");
+    },
+
     showInfo() {
       return $array.show(
         this.getCurrentEntries(),
@@ -496,7 +498,7 @@ export default {
   },
   created() {
     getAllProduct().then((res) => {
-      console.log(res)
+      console.log(res);
       this.entries = res;
       this.paginateData(this.entries);
     });
@@ -674,7 +676,7 @@ export default {
         this.dialogFormVisible = false;
       }
     },
-    changeQuantityInput(index){
+    changeQuantityInput(index) {
       let product = this.listProductSelect[index];
       if (product.quantitySelect == 1) return;
       // product.quantitySelect = +product.quantitySelect - 1;
@@ -685,7 +687,7 @@ export default {
       document.getElementById(quantityInput).value = product.quantitySelect;
       document.getElementById(total).innerHTML = this.toMoney(product.total);
       this.sumTotalReceipt();
-    }
+    },
   },
   mounted() {},
 };

@@ -71,12 +71,7 @@
               rows="5"
               v-model.trim="$v.product.description.$model"
             ></textarea>
-            <!-- <div
-              class="error"
-              v-if="submitted && !$v.product.description.required"
-            >
-              Mô tả không thể để trống
-            </div> -->
+
             <div class="error" v-if="!$v.product.description.maxLength">
               Mô tả không quá
               {{ $v.product.description.$params.maxLength.max }} kí tự.
@@ -88,44 +83,9 @@
               :editor="editor"
               v-model.trim="$v.product.content.$model"
             ></ckeditor>
-            <!-- <div class="error" v-if="submitted && !$v.product.content.required">
-              Nội dung không thể để trống
-            </div> -->
           </div>
 
           <div class="row">
-            <!-- <div class="col-6 form-group-customer">
-              <label for="category">Loại Sản phẩm</label>
-              <select
-                name="categoryId"
-                id="category"
-                class="form-control"
-                v-model.trim="$v.product.categoryId.$model"
-              >
-                <option value="">chọn danh mục</option>
-
-                <template v-for="(item, key) in listCate">
-                  <option :key="item.id" value="">
-                    {{ key.split(",")[1] }}
-                  </option>
-
-                  <option
-                    v-for="item2 in listCate[key]"
-                    :key="item2.id"
-                    :value="item2.id"
-                  >
-                    -----{{ item2.categoryName }}
-                  </option>
-                </template>
-              </select>
-
-              <div
-                class="error"
-                v-if="submitted && !$v.product.categoryId.required"
-              >
-                Vui lòng chọn loại sản phẩm
-              </div>
-            </div> -->
             <div class="col-6 form-group-customer">
               <label for="parent">Chọn sản phẩm cha</label>
               <select
@@ -194,76 +154,6 @@
             <div class="col-12 text-center mt-4">
               <h2>Chọn đặc trưng sản phẩm</h2>
             </div>
-            <!-- <template v-for="(ls, key) in listAllSize">
-              <div class="col-6 form-group-customer" :key="ls.id">
-                <label :for="key">{{ key }}</label>
-                <select
-                  :name="key"
-                  :id="key"
-                  class="form-control"
-                  @change="addSpecialitySize(key)"
-                >
-                  <option value="">chọn {{ key }}</option>
-                  
-                  <template v-if="!productEdit">
-                    <option
-                      v-for="ls2 in listAllSize[key]"
-                      :key="ls2.id"
-                      :value="ls2.id"
-                    >
-                      {{ ls2.description }}
-                    </option>
-                  </template>
-                  
-                  <template v-if="productEdit">
-                    <option
-                      v-for="ls2 in listAllSize[key]"
-                      :key="ls2.id"
-                      :value="ls2.id"
-                      :selected="product.mapSpecial[ls2.id][0]"
-                    >
-                      {{ ls2.description }}
-                    </option>
-                  </template>
-                </select>
-                <span class="errorMessage"></span>
-              </div>
-            </template>
-            <template v-for="(ls, key) in listAllColor">
-              <div class="col-6 form-group-customer" :key="ls.id">
-                <label :for="key">{{ key }}</label>
-                <select
-                  :name="key"
-                  :id="key"
-                  class="form-control"
-                  @change="addSpecialityColor(key)"
-                >
-                  <option value="">chọn {{ key }}</option>
-                 
-                  <template v-if="!productEdit">
-                    <option
-                      v-for="ls2 in listAllColor[key]"
-                      :key="ls2.id"
-                      :value="ls2.id"
-                    >
-                      {{ ls2.description }}
-                    </option>
-                  </template>
-                  
-                  <template v-if="productEdit">
-                    <option
-                      v-for="ls2 in listAllColor[key]"
-                      :key="ls2.id"
-                      :value="ls2.id"
-                      :selected="product.mapSpecial[ls2.id][0]"
-                    >
-                      {{ ls2.description }}
-                    </option>
-                  </template>
-                </select>
-                <span class="errorMessage"></span>
-              </div>
-            </template> -->
 
             <template v-for="(ls, key, index) in listSpe">
               <div class="col-6 form-group-customer" :key="ls.id">
@@ -495,8 +385,7 @@ export default {
       listCate: {},
       listProductParent: [],
       listSpe: {},
-      // listAllSize: {},
-      // listAllColor: {},
+
       product: {
         productName: "",
         price: 0,
@@ -624,7 +513,6 @@ export default {
           this.$swal("Yêu cầu", "Chọn đầy đủ đặc trưng!", "error");
           return;
         } else if (this.checkIsSpecChildExist(listSpeciality)) {
-          
           this.$swal(
             "Yêu cầu",
             "Kích thước và màu sắc đã tồn tại, vui lòng kiểm tra lại!",
@@ -714,23 +602,6 @@ export default {
         });
     },
 
-    // openFullScreen1() {
-    //   this.fullscreenLoading = true;
-    //   if (this.fullscreenLoading == true) {
-    //     setTimeout(() => {
-    //       this.fullscreenLoading = false;
-    //     }, 2500);
-    //   }
-    // },
-    // addSpecialitySize(e) {
-    //   let specialityId = document.getElementById(e);
-    //   this.listSpeObject[1] = specialityId.value;
-    // },
-
-    // addSpecialityColor(e) {
-    //   let specialityId = document.getElementById(e);
-    //   this.listSpeObject[0] = specialityId.value;
-    // },
     async getParentSpec() {
       console.log(this.product.parentId);
       this.listSpecChild = await getAllChildSpeByParentId(

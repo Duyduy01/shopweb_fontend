@@ -347,7 +347,7 @@ export default {
         { name: "#", text: "Hành động" },
       ],
       entries: [],
-      showEntries: [5, 10, 15, 25, 50, 72, 100],
+      showEntries: [5, 10, 15, 25, 50, 75, 100],
       currentEntries: 10,
       filteredEntries: [],
       currentPage: 1,
@@ -399,6 +399,7 @@ export default {
   created() {
     getAllProduct().then((res) => {
       this.entries = res;
+      console.log(res)
       this.paginateData(this.entries);
     });
   },
