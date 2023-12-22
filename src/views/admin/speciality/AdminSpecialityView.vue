@@ -173,7 +173,7 @@
           <div class="row">
             <!-- type name -->
             <div class="form-group col-6 form-group-customer">
-              <label for="categoryName">Tên loại đặc trưng</label>
+              <label for="categoryName">Tên đặc trưng</label>
               <input
                 type="text"
                 class="form-control"
@@ -252,7 +252,13 @@
         </div>
 
         <span slot="footer" class="dialog-footer d-flex justify-content-end">
-          <button type="submit" class="btn btn-outline-primary">Áp dụng</button>
+          <button
+            type="submit"
+            class="btn btn-outline-primary"
+            v-loading.fullscreen.lock="fullscreenLoading"
+          >
+            Áp dụng
+          </button>
 
           <button
             type="button"
@@ -266,17 +272,13 @@
     </el-dialog>
 
     <!-- thêm đặc trưng old -->
-    <el-dialog
-      title="Thêm đặc  trưng"
-      :visible.sync="modeAddSpeOld"
-      width="60%"
-    >
+    <el-dialog title="Thêm đặc trưng" :visible.sync="modeAddSpeOld" width="60%">
       <form id="m-form-admin-add-product" @submit.prevent="callApiAddSpeOld">
         <div class="container">
           <div class="row">
             <!-- type name -->
             <div class="form-group col-6 form-group-customer">
-              <label for="categoryName">Tên loại đặc trưng</label>
+              <label for="categoryName">Tên đặc trưng</label>
               <input
                 type="text"
                 class="form-control"
@@ -358,7 +360,13 @@
         </div>
 
         <span slot="footer" class="dialog-footer d-flex justify-content-end">
-          <button type="submit" class="btn btn-outline-primary">Áp dụng</button>
+          <button
+            type="submit"
+            class="btn btn-outline-primary"
+            v-loading.fullscreen.lock="fullscreenLoading"
+          >
+            Áp dụng
+          </button>
 
           <button
             type="button"
@@ -431,6 +439,7 @@ export default {
       check: null,
       submitted: false,
       //   thay đổi
+      fullscreenLoading: false,
       // list parent cate
       listTitle: [],
       speIndex: "",
@@ -572,6 +581,8 @@ export default {
     },
     //new
     addSpeNew() {
+      this.submitted = false;
+      this.$v.$reset();
       this.modeAddSpeNew = true;
       this.speNew = {
         id: "",
@@ -590,35 +601,35 @@ export default {
       if (this.$v.$invalid) {
         console.log("error validate");
       } else {
+        self.fullscreenLoading = true;
         let data = JSON.stringify(this.speNew);
-        console.log(data);
         addSpeNew(data)
           .then((res) => {
             self.listTitle.push(res);
             self
-              .$swal("Thành công", "Thêm đặc trưng mới thành công", "success")
+              .$swal("Thành công", "Thêm đặc trưng mới thành công!", "success")
               .then(function () {});
+            self.fullscreenLoading = false;
           })
           .catch((err) => {
-            console.log(err);
+            self.fullscreenLoading = false;
             self
-              .$swal("Thất bại", err.response.data.data, "error")
+              .$swal({
+                customClass: {
+                  container: "my-swal",
+                },
+                icon: "error",
+                title: "Thất bại",
+                html: `Đặc trưng <strong>${err.response.data.data}</strong> đã tồn tại!`,
+              })
               .then(function () {});
           });
-        this.submitted = false;
-        self.modeAddSpeNew = false;
-        this.speNew = {
-          id: "",
-          featuredName: "",
-          description: "",
-          featuredKey: "",
-          active: "",
-          featuredCode: "",
-        };
       }
     },
     //old
     addSpeOld() {
+      this.submitted = false;
+      this.$v.$reset();
       this.speNew = {
         id: "",
         featuredName: "",
@@ -649,57 +660,75 @@ export default {
       }
     },
     addOld(self) {
+      this.fullscreenLoading = true;
       let data = JSON.stringify(this.speNew);
       console.log(data);
       addSpeOld(data)
         .then((res) => {
           if (res.active == 1) res.boolActive = true;
-          self
-            .$swal(
-              "Thành công",
-              `Thêm đặc trưng ${res.featuredName.toLowerCase()} thành công`,
-              "success"
-            )
-            .then(function () {});
 
           self.listTitle[self.speIndex].specialityEntities.push(res);
           self.entries = self.listTitle[self.speIndex].specialityEntities;
           self.paginateData(self.entries);
-
-          self.submitted = false;
           self.modeAddSpeOld = false;
-          self.speNew = {
-            id: "",
-            featuredName: "",
-            description: "",
-            featuredKey: "",
-            active: "",
-            featuredCode: "",
-          };
+          this.fullscreenLoading = false;
+          self
+            .$swal({
+              icon: "success",
+              title: "Thành công",
+              html: `Thêm đặc trưng <strong>${res.featuredName.toLowerCase()} ${
+                res.description
+              }</strong> thành công!`,
+            })
+            .then(function () {});
         })
         .catch((err) => {
           console.log(err);
+          this.fullscreenLoading = false;
           self
-            .$swal("Thất bại", err.response.data.data, "error")
+            .$swal({
+              customClass: {
+                container: "my-swal",
+              },
+              icon: "error",
+              title: "Thất bại",
+              html: err.response.data.data,
+            })
             .then(function () {});
         });
     },
     // edit
     ModalEdit(spe) {
       this.modeAddSpeOld = true;
-      this.speNew = spe;
+      this.speNew = {
+        id: spe.id,
+        featuredName: spe.featuredName,
+        description: spe.description,
+        featuredKey: spe.featuredKey,
+        active: spe.active,
+        featuredCode: spe.featuredCode,
+      };
+      console.log(this.speNew);
     },
     editOld(self) {
+      this.fullscreenLoading = true;
       let data = JSON.stringify(this.speNew);
       editSpe(data)
         .then((res) => {
-          self
-            .$swal("Thành công", `Sửa đặc trưng thành công`, "success")
-            .then(function () {});
-          console.log(res);
-          self.speNew.boolActive = res.boolActive;
+          // Tìm vị trí của spe trong specialityEntities
+          let parentSpeciality = self.listTitle[self.speIndex];
+          const index = parentSpeciality.specialityEntities.findIndex(
+            (item) => item.id === self.speNew.id
+          );
+          // Gán lại giá trị đã cập nhật cho spe
+          if (index !== -1) {
+            parentSpeciality.specialityEntities[index] = res;
+          }
+          self.entries = parentSpeciality.specialityEntities;
+          self.paginateData(self.entries);
           self.submitted = false;
           self.modeAddSpeOld = false;
+          this.fullscreenLoading = false;
           self.speNew = {
             id: "",
             featuredName: "",
@@ -708,20 +737,39 @@ export default {
             active: "",
             featuredCode: "",
           };
+          self
+            .$swal("Thành công", `Sửa đặc trưng thành công!`, "success")
+            .then(function () {});
         })
         .catch((err) => {
           console.log(err);
+          this.fullscreenLoading = false;
           self
-            .$swal("Thất bại", err.response.data.data, "error")
+            .$swal({
+              customClass: {
+                container: "my-swal",
+              },
+              icon: "error",
+              title: "Thất bại",
+              html: `Mô tả <strong>${err.response.data.data}</strong> đã tồn tại!`,
+            })
             .then(function () {});
         });
     },
     // update status
     calApiUpdateStatus(id) {
-      console.log(id);
+      let self = this;
       updateStatus(id)
         .then((res) => {
-          console.log(res);
+          // Tìm vị trí của spe trong specialityEntities
+          let parentSpeciality = self.listTitle[self.speIndex];
+          const index = parentSpeciality.specialityEntities.findIndex(
+            (item) => item.id === id
+          );
+          // Gán lại giá trị đã cập nhật cho spe
+          if (index !== -1) {
+            parentSpeciality.specialityEntities[index].active = res.active;
+          }
         })
         .catch((err) => {
           console.log(err);

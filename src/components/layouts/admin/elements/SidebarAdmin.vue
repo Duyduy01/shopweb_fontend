@@ -142,7 +142,7 @@
               <a href="#" class="nav-link" style="background-color: black">
                 <i class="nav-icon fas fa-chart-pie"></i>
                 <p>
-                  Cập nhập loại sản phẩm
+                  Cập nhập danh mục sản phẩm
                   <i class="right fas fa-angle-left"></i>
                 </p>
               </a>
@@ -150,7 +150,7 @@
                 <li class="nav-item">
                   <router-link to="/admin/category" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Danh sách loại sản phẩm</p>
+                    <p>Danh sách danh mục sản phẩm</p>
                   </router-link>
                 </li>
               </ul>

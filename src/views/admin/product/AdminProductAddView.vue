@@ -385,7 +385,7 @@ export default {
       listCate: {},
       listProductParent: [],
       listSpe: {},
-
+      listSpecChild: {},
       product: {
         productName: "",
         price: 0,
@@ -400,6 +400,7 @@ export default {
         active: null,
       },
       listSpeObject: {},
+      listSpeObjectBefore: {},
       listImgChildren: {},
       submitted: false,
       editor: ClassicEditor,
@@ -454,8 +455,8 @@ export default {
       getAllSpe().then((res) => {
         console.log(res);
         this.listSpe = {
-          "Kích thước": res["Kích thước"] || [],
           "Màu sắc": res["Màu sắc"] || [],
+          "Kích thước": res["Kích thước"] || [],
         };
 
         console.log(this.listSpe);
@@ -607,12 +608,13 @@ export default {
       this.listSpecChild = await getAllChildSpeByParentId(
         this.product.parentId
       );
-      console.log(this.listSpecChild);
+      console.log("123", this.listSpecChild);
     },
 
     addSpeciality(e, index) {
       let specialityId = document.getElementById(e);
       this.listSpeObject[index] = specialityId.value;
+      console.log(this.listSpeObject[index], specialityId.value);
     },
     addImgChilden(e) {
       let readerFile = new FileReader();
@@ -647,29 +649,61 @@ export default {
     },
 
     checkIsSpecChildExist(listSpec) {
-      let checkColor = false;
-      let checkSize = false;
-      Object.entries(this.listSpecChild).forEach(([key, values]) => {
-        console.log(key, values);
-        if (key === "Kích thước") {
-          if (
-            !values.some((value) => String(value.id) === String(listSpec[0]))
-          ) {
-            checkSize = true;
+      let listSpecBefore = Object.values(this.listSpeObjectBefore);
+      let checkColor = true;
+      let checkSize = true;
+      if (listSpecBefore.length > 0) {
+        Object.entries(this.listSpecChild).forEach(([key, values]) => {
+          console.log(key, values);
+
+          if (key === "Kích thước") {
+            if (
+              values.some(
+                (value) => String(value.id) === String(listSpec[1])
+              ) &&
+              listSpec[1] !== listSpecBefore[1]
+            ) {
+              checkSize = false;
+            }
+          } else if (key === "Màu sắc") {
+            if (
+              values.some(
+                (value) => String(value.id) === String(listSpec[0])
+              ) &&
+              listSpec[0] !== listSpecBefore[0]
+            ) {
+              checkColor = false;
+            }
           }
-        } else if (key === "Màu sắc") {
-          if (
-            !values.some((value) => String(value.id) === String(listSpec[1]))
-          ) {
-            checkColor = true;
-          }
+        });
+        console.log(checkColor, checkSize);
+        if (checkColor && checkSize) {
+          return false;
+        } else {
+          return true;
         }
-      });
-      console.log(checkColor, checkSize);
-      if (!checkColor && !checkSize) {
-        return true;
       } else {
-        return false;
+        Object.entries(this.listSpecChild).forEach(([key, values]) => {
+          if (key === "Kích thước") {
+            if (
+              values.some((value) => String(value.id) === String(listSpec[1]))
+            ) {
+              checkSize = false;
+            }
+          } else if (key === "Màu sắc") {
+            if (
+              values.some((value) => String(value.id) === String(listSpec[0]))
+            ) {
+              checkColor = false;
+            }
+          }
+        });
+        console.log(checkColor, checkSize);
+        if (!checkColor && !checkSize) {
+          return true;
+        } else {
+          return false;
+        }
       }
     },
 
@@ -679,6 +713,7 @@ export default {
           this.product = res;
           this.productEdit = true;
           let index = 0;
+          this.getParentSpec(this.product.parentId);
 
           // speciality
           let getKeys = Object.keys(this.product.mapSpecial);
@@ -687,6 +722,11 @@ export default {
           getKeys.forEach((e) => {
             if (spe[e][0] == true) {
               this.listSpeObject[index] = e;
+              this.listSpeObjectBefore[index] = e;
+              console.log(
+                this.listSpeObject[index],
+                this.listSpeObjectBefore[index]
+              );
               index++;
             }
           });

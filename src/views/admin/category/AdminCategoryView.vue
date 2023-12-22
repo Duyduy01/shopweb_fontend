@@ -1,17 +1,17 @@
 <template>
   <div>
     <div class="product-header">
-      <h1>Danh sách loại sản phẩm</h1>
+      <h1>Danh sách danh mục sản phẩm</h1>
       <div class="m-admin-product-action-add button-show-modal" id="one">
         <button class="btn btn-outline-primary" @click="modalAdd">
-          Thêm loại sản phẩm
+          Thêm danh mục sản phẩm
         </button>
       </div>
     </div>
 
     <el-tabs type="card" @tab-click="handleClick" v-model="categoryIndex">
       <el-tab-pane v-for="e in cateParent" :key="e.id" :label="e.categoryName">
-        <div class="text-center mb-5"><h4>Loại sản phẩm cha</h4></div>
+        <div class="text-center mb-5"><h4>Danh mục sản phẩm cha</h4></div>
         <div>
           <table class="table table:border secondary-5:border">
             <thead>
@@ -27,8 +27,8 @@
               <tr>
                 <td>{{ 1 }}</td>
                 <td>{{ e.categoryName }}</td>
-                <td></td>
                 <td>{{ e.content }}</td>
+                <td></td>
                 <td>
                   <el-switch
                     v-model="e.boolActive"
@@ -46,7 +46,7 @@
                         class="clear-test"
                         type="button"
                         id="m-into-choose-product"
-                        @click="ModalEdit(e)"
+                        @click="modalEdit(e)"
                       >
                         <font-awesome-icon icon="fa-solid fa-pen-to-square" />
                       </button>
@@ -58,7 +58,9 @@
           </table>
           <hr />
         </div>
-        <div class="text-center mt-5"><h4>Danh sách loại sản phẩm con</h4></div>
+        <div class="text-center mt-5">
+          <h4>Danh sách danh mục sản phẩm con</h4>
+        </div>
         <div class="between:flex bottom:margin-3">
           <div class="center:flex-items">
             <span class="right:margin-1">Hiển thị</span>
@@ -121,7 +123,7 @@
                         class="clear-test"
                         type="button"
                         id="m-into-choose-product"
-                        @click="ModalEdit(td)"
+                        @click="modalEdit(td)"
                       >
                         <font-awesome-icon icon="fa-solid fa-pen-to-square" />
                       </button>
@@ -201,9 +203,9 @@
       </el-tab-pane>
     </el-tabs>
 
-    <!-- thêm loại sản phẩm -->
+    <!-- thêm danh mục sản phẩm -->
     <el-dialog
-      title="Cập nhập loại sản phẩm"
+      title="Cập nhập danh mục sản phẩm"
       :visible.sync="dialogFormVisible"
       width="60%"
     >
@@ -212,7 +214,7 @@
           <div class="row">
             <!-- cate name -->
             <div class="form-group col-6 form-group-customer">
-              <label for="categoryName">Tên loại sản phẩm</label>
+              <label for="categoryName">Tên danh mục sản phẩm</label>
               <input
                 type="text"
                 class="form-control"
@@ -224,12 +226,12 @@
                 class="error"
                 v-if="submitted && !$v.category.categoryName.required"
               >
-                Vui lòng nhập tên loại sản phẩm
+                Vui lòng nhập tên danh mục sản phẩm
               </div>
             </div>
             <!-- parent cate -->
             <div class="col-6 form-group-customer">
-              <label for="parent">Loại sản phẩm cha</label>
+              <label for="parent">Danh mục sản phẩm cha</label>
               <select
                 name="parentId"
                 id="parent"
@@ -296,8 +298,13 @@
         </div>
 
         <span slot="footer" class="dialog-footer d-flex justify-content-end">
-          <button type="submit" class="btn btn-outline-primary">Áp dụng</button>
-
+          <button
+            type="submit"
+            class="btn btn-outline-primary"
+            v-loading.fullscreen.lock="fullscreenLoading"
+          >
+            Áp dụng
+          </button>
           <button
             type="button"
             @click="dialogFormVisible = false"
@@ -334,9 +341,9 @@ export default {
     return {
       columns: [
         { name: "id", text: "ID" },
-        { name: "category", text: "Tên loại sản phẩm" },
+        { name: "category", text: "Tên danh mục sản phẩm" },
         { name: "content", text: "Nội dung" },
-        { name: "parentId", text: "Loại sản phẩm cha" },
+        { name: "parentId", text: "Danh mục sản phẩm cha" },
         { name: "status", text: "Trạng thái" },
         { name: "#", text: "Hành động" },
       ],
@@ -366,6 +373,7 @@ export default {
       submitted: false,
       //   thay đổi
       dialogFormVisible: false,
+      fullscreenLoading: false,
       // list parent cate
       listParentCate: [],
       categoryIndex: "",
@@ -490,60 +498,14 @@ export default {
       }
       this.paginateData(sortedEntries);
     },
-    // thay doi
-    modalAdd() {
-       this.submitted = false;
-      this.dialogFormVisible = true;
-      this.category = {
-        id: "",
-        categoryName: "",
-        content: "",
-        status: "",
-        parentId: "0",
-      };
-    },
-    ModalEdit(cate) {
-       this.submitted = false;
-      this.dialogFormVisible = true;
-      this.category = cate;
-    },
 
-    calApiUpdateStatus(id) {
-        let self = this;
-        updateStatusCate(id)
-          .then((res) => {
-            // set switch
-            this.category.boolActive = res.data.boolActive;
-            if (res.data.parentId == null) {
-              this.listParentCate.forEach((e) => {
-                if (e.id == res.data.id) {
-                  e.listChild.forEach((child) => {
-                    child.boolActive = e.boolActive;
-                    child.status = e.status;
-                  });
-                }
-              });
-            }
-            this.category = {
-              id: "",
-              categoryName: "",
-              content: "",
-              status: "",
-              parentId: "0",
-            };
-          })
-          .catch((err) => {
-            console.log(err);
-            self.$swal("Lỗi", err.response.data.data, "error");
-          });
-        this.submitted = false;
-        self.dialogFormVisible = false;
-    },
     // click
     handleClick() {
       this.entries = this.listParentCate[this.categoryIndex].listChild;
       this.paginateData(this.entries);
+      console.log(this.showInfo);
     },
+
     // upload cate
     updateCate(e) {
       e.preventDefault();
@@ -560,14 +522,30 @@ export default {
         }
       }
     },
+
+    // thay doi
+    modalAdd() {
+      this.submitted = false;
+      this.dialogFormVisible = true;
+      this.category = {
+        id: "",
+        categoryName: "",
+        content: "",
+        status: "",
+        parentId: "0",
+      };
+    },
+
     // add cate
     apiAddCate(data) {
       let self = this;
+      self.fullscreenLoading = true;
       addCate(data)
         .then((res) => {
           console.log(res);
           if (res.data.parentId == null || res.data.parentId == 0) {
             this.listParentCate.push(res.data);
+            console.log(this.listParentCate);
           } else {
             let cate = this.listParentCate.find((e, i) => {
               if (e.id == res.data.parentId) {
@@ -580,39 +558,75 @@ export default {
             this.paginateData(this.entries);
           }
           self.$swal("Thành công", res.message, "success").then(function () {});
-          this.category = {
-            id: "",
-            categoryName: "",
-            content: "",
-            status: "",
-            parentId: "0",
-          };
+          this.submitted = false;
+          self.dialogFormVisible = false;
+          self.fullscreenLoading = false;
         })
         .catch((err) => {
           console.log(err.response);
-          self.$swal("Lỗi", err.response.data.data, "error");
+          self.fullscreenLoading = false;
+          self.$swal({
+            customClass: {
+              container: "my-swal",
+            },
+            icon: "error",
+            title: "Lỗi",
+            html: `Tên danh mục sản phẩm <strong>${err.response.data.data}</strong> đã tồn tại!`,
+          });
         });
-      this.submitted = false;
-      self.dialogFormVisible = false;
     },
+
+    // thay doi
+    modalEdit(cate) {
+      this.submitted = false;
+      this.dialogFormVisible = true;
+      this.category = { ...cate };
+    },
+
     //edit
     apiEditCate(data) {
       let self = this;
+      self.fullscreenLoading = true;
       editCate(data)
         .then((res) => {
-          // set switch
-          this.category.boolActive = res.data.boolActive;
-          if (res.data.parentId == null) {
+          // console.log(res);
+          if (res.data.parentId === null) {
             this.listParentCate.forEach((e) => {
               if (e.id == res.data.id) {
+                e.boolActive = res.data.boolActive;
+                e.categoryCode = res.data.categoryCode;
+                e.categoryName = res.data.categoryName;
+                e.content = res.data.content;
+                e.status = res.data.status;
                 e.listChild.forEach((child) => {
                   child.boolActive = e.boolActive;
                   child.status = e.status;
                 });
               }
             });
+          } else if (res.data.parentId !== null) {
+            // Tìm vị trí của child trong Entities
+            let parentCategory = self.listParentCate[self.categoryIndex];
+            const index = parentCategory.listChild.findIndex(
+              (item) => item.id === res.data.id
+            );
+            console.log(index);
+            // Gán lại giá trị đã cập nhật cho child
+            if (index !== -1) {
+              parentCategory.listChild[index] = res.data;
+              // if (
+              //   self.listParentCate[self.categoryIndex].listChild[index]
+              //     .parentId !== self.listParentCate[self.categoryIndex].id
+              // ) {
+              //   let updatedChildList = self.listParentCate[self.categoryIndex].listChild;
+              //   console.log(updatedChildList)
+              //   console.log(123456);
+              // }
+            }
+            self.entries = parentCategory.listChild;
+            console.log(self.entries);
+            self.paginateData(self.entries);
           }
-          self.$swal("Thành công", res.message, "success").then(function () {});
           this.category = {
             id: "",
             categoryName: "",
@@ -620,6 +634,58 @@ export default {
             status: "",
             parentId: "0",
           };
+          this.submitted = false;
+          self.dialogFormVisible = false;
+          self.fullscreenLoading = false;
+          self.$swal("Thành công", res.message, "success").then(function () {});
+        })
+        .catch((err) => {
+          console.log(err);
+          self.fullscreenLoading = false;
+          self.$swal({
+            customClass: {
+              container: "my-swal",
+            },
+            icon: "error",
+            title: "Lỗi",
+            html: `Tên danh mục sản phẩm <strong>${err.response.data.data}</strong> đã tồn tại!`,
+          });
+        });
+    },
+
+    // update status
+    calApiUpdateStatus(id) {
+      let self = this;
+      updateStatusCate(id)
+        .then((res) => {
+          console.log(res);
+          // set switch
+          // this.category.boolActive = res.data.boolActive;
+          if (res.data.parentId === null) {
+            this.listParentCate.forEach((e) => {
+              if (e.id == res.data.id) {
+                e.boolActive = res.data.boolActive;
+                e.status = res.data.status;
+                console.log(e);
+                e.listChild.forEach((child) => {
+                  child.boolActive = e.boolActive;
+                  child.status = e.status;
+                });
+              }
+            });
+          } else if (res.data.parentId !== null) {
+            // Tìm vị trí của child trong Entities
+            let parentCategory = self.listParentCate[self.categoryIndex];
+            const index = parentCategory.listChild.findIndex(
+              (item) => item.id === res.data.id
+            );
+            console.log(index);
+            // Gán lại giá trị đã cập nhật cho child
+            if (index !== -1) {
+              parentCategory.listChild[index].boolActive = res.data.boolActive;
+              parentCategory.listChild[index].status = res.data.status;
+            }
+          }
         })
         .catch((err) => {
           console.log(err);

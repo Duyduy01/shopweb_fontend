@@ -471,6 +471,8 @@ export default {
     },
     // thay doi
     modalAdd() {
+      this.submitted = false;
+      this.$v.$reset();
       this.brand = {
         id: null,
         brandName: "",
@@ -482,14 +484,27 @@ export default {
       this.dialogFormVisible = true;
     },
     ModalEdit(brand) {
-      console.log(brand);
-      this.brand = brand;
+      this.submitted = false;
+      this.$v.$reset();
+      this.brand = { ...brand };
       this.imgChange = null;
       this.dialogFormVisible = true;
     },
 
     updateStatus(id) {
-      updateStatusBrand(id);
+      let self = this;
+      updateStatusBrand(id)
+        .then((res) => {
+          // Tìm vị trí của brand trong Entities
+          const index = self.entries.findIndex((item) => item.id === id);
+          // // Gán lại giá trị đã cập nhật cho Entities
+          if (index !== -1) {
+            self.entries[index].status = res.data.status;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     // add brand
     updateBrand(e) {
@@ -513,10 +528,10 @@ export default {
         listKeys.forEach((e) => {
           form.append(e, this.brand[e]);
         });
-        console.log("Form Data:");
-        for (let pair of form.entries()) {
-          console.log(pair[0] + ": " + pair[1]);
-        }
+        // console.log("Form Data:");
+        // for (let pair of form.entries()) {
+        //   console.log(pair[0] + ": " + pair[1]);
+        // }
         if (this.brand.id == null) {
           form.delete("id");
           this.apiAddBrand(form);
@@ -528,44 +543,44 @@ export default {
     apiAddBrand(form) {
       let self = this;
       // let data = JSON.stringify(this.brand);
-      self.dialogFormVisible = false;
       self.fullscreenLoading = true;
       addBrand(form)
         .then((res) => {
           this.entries.push(res.data);
           this.paginateData(this.entries);
           self.$swal("Thành công", res.message, "success").then(function () {});
-          this.brand = {
-            id: null,
-            brandName: "",
-            status: "",
-            content: "",
-            icon: "",
-          };
           this.submitted = false;
+          self.dialogFormVisible = false;
           self.fullscreenLoading = false;
         })
         .catch((err) => {
           console.log(err.response.data);
           self.fullscreenLoading = false;
-          self.$swal("Lỗi", err.response.data.data, "error");
+          self.$swal({
+            customClass: {
+              container: "my-swal",
+            },
+            icon: "error",
+            title: "Lỗi",
+            html: `Tên thương hiệu <strong>${err.response.data.data}</strong> đã tồn tại!`,
+          });
         });
     },
     apiEditBrand(form) {
       let self = this;
       // let data = JSON.stringify(this.brand);
-      self.dialogFormVisible = false;
       self.fullscreenLoading = true;
       editBrand(form)
         .then((res) => {
-          this.brand.boolActive = res.data.boolActive;
-          this.brand.icon = res.data.icon;
-          self.$swal("Thành công", res.message, "success").then(function () {});
-          // this.entries.forEach((e) => {
-          //   if (e.id == res.id) {
-          //     e = res;
-          //   }
-          // });
+          // Tìm vị trí của brand trong Entities
+          const index = self.entries.findIndex(
+            (item) => item.id === res.data.id
+          );
+          // // Gán lại giá trị đã cập nhật cho Entities
+          if (index !== -1) {
+            self.entries[index] = res.data;
+            self.paginateData(self.entries);
+          }
           this.brand = {
             id: null,
             brandName: "",
@@ -574,12 +589,21 @@ export default {
             icon: "",
           };
           this.submitted = false;
+          self.dialogFormVisible = false;
           self.fullscreenLoading = false;
+          self.$swal("Thành công", res.message, "success").then(function () {});
         })
         .catch((err) => {
           console.log(err.response.data);
           self.fullscreenLoading = false;
-          self.$swal("Lỗi", err.response.data.data, "error");
+          self.$swal({
+            customClass: {
+              container: "my-swal",
+            },
+            icon: "error",
+            title: "Lỗi",
+            html: `Thương hiệu <strong>${err.response.data.data}</strong> đã tồn tại!`,
+          });
         });
     },
     // Xóa thương hiệu
@@ -590,7 +614,7 @@ export default {
           .$swal({
             icon: "warning",
             title: "Warning",
-            text: `Bạn có chắc muốn xóa thương hiệu ${brandName}`,
+            html: `Bạn có chắc muốn xóa thương hiệu <strong>${brandName}</strong>`,
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
@@ -622,7 +646,7 @@ export default {
                     self.$swal({
                       icon: "error",
                       title: "Failed",
-                      text: "Xóa thương hiệu thất bại",
+                      text: "Xóa thương hiệu thất bại!",
                       timer: 1500,
                     });
                   });
@@ -656,6 +680,8 @@ export default {
 </script>
 
 <style lang="css" scoped>
+@import url("@/assets/css/modal.css");
+@import url("@/assets/css/admin-product-receipt.css");
 .product-header {
   text-align: center;
 }
@@ -681,9 +707,6 @@ export default {
   bottom: 100%;
   transform: translate(-50%, -50%);
 }
-
-@import url("@/assets/css/modal.css");
-@import url("@/assets/css/admin-product-receipt.css");
 
 .m-admin-product-action-search > form > input {
   width: 30rem;

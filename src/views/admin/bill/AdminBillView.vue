@@ -555,7 +555,7 @@ export default {
       else {
         this.$swal({
           title: "Bạn có chắc chắn Muốn thay đổi trạng thái ?",
-          text: `Mã phiếu nhập: ${bill.code} || ${this.checkStatusText(
+          html: `Mã phiếu nhập: <strong>${bill.code}</strong> || ${this.checkStatusText(
             bill.status
           )} => ${this.checkStatusText(bill.status + 1)}`,
           type: "question",

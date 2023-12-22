@@ -1,0 +1,11 @@
+.swal-overlay {
+  z-index: 9999 !important;
+}
+
+.swal-modal {
+  z-index: 10000 !important;
+}
+/* sweetAlert */
+.my-swal {
+  z-index: 99999;
+}
