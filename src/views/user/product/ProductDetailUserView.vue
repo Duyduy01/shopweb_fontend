@@ -513,6 +513,12 @@ export default {
         this.checkValidate = true;
         this.checkChoose = false;
       } else {
+        if (!this.$store.getters.CURRENT_USER) {
+          this.$store.commit(
+            "SET_PATH",
+            `/dat-hang-ngay/san-pham/${this.cart.productId}/so-luong/${this.cart.quantity}`
+          );
+        }
         this.$router.push(
           `/dat-hang-ngay/san-pham/${this.cart.productId}/so-luong/${this.cart.quantity}`
         );

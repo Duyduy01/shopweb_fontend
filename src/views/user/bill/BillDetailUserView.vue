@@ -336,7 +336,7 @@ export default {
     cancelBill(bill) {
       this.$swal({
         title: "Bạn có chắc chắn Muốn Hủy ?",
-        text: `Đơn đặt hàng có mã: ${bill.billCode}`,
+        html: `Đơn đặt hàng có mã: <strong>${bill.billCode}</strong>`,
         type: "question",
         icon: "question",
         showCancelButton: true,

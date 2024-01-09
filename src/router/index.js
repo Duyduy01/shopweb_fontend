@@ -36,12 +36,12 @@ const routes = [{
 
   },
   {
-    path: '/gioi-thieu-ve-hang',
+    path: '/gioi-thieu-cua-hang',
     component: Layout,
-    redirect: '/gioi-thieu-ve-hang',
+    redirect: '/gioi-thieu-cua-hang',
     children: [{
-      path: '/gioi-thieu-ve-hang',
-      name: 'gioi-thieu-ve-hang',
+      path: '/gioi-thieu-cua-hang',
+      name: 'gioi-thieu-cua-hang',
       component: () => import('@/views/AboutView.vue'),
       meta: {
         title: 'Giới thiệu'

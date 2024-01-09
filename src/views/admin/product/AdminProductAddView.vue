@@ -356,7 +356,6 @@
 
 <script>
 // import Vue from "vue";
-import { getAllCateInaddProduct } from "@/service/admin/category";
 import {
   getAllProductByActive,
   addProduct,
@@ -367,7 +366,6 @@ import {
   getAllSpe,
   getAllChildSpeByParentId,
 } from "@/service/admin/speciality";
-// import { getAllBrand } from "@/service/admin/brand";
 import { validationMixin } from "vuelidate";
 import { required, maxLength, numeric } from "vuelidate/lib/validators";
 
@@ -382,7 +380,6 @@ export default {
   props: ["id"],
   data() {
     return {
-      listCate: {},
       listProductParent: [],
       listSpe: {},
       listSpecChild: {},
@@ -446,22 +443,19 @@ export default {
     },
   },
   created() {
-    getAllCateInaddProduct().then((res) => {
-      this.listCate = res;
+    getAllProductByActive().then((res) => {
+      this.listProductParent = res;
     }),
-      getAllProductByActive().then((res) => {
-        this.listProductParent = res;
-      }),
-      getAllSpe().then((res) => {
-        console.log(res);
-        this.listSpe = {
-          "Màu sắc": res["Màu sắc"] || [],
-          "Kích thước": res["Kích thước"] || [],
-        };
+    getAllSpe().then((res) => {
+      console.log(res);
+      this.listSpe = {
+        "Màu sắc": res["Màu sắc"] || [],
+        "Kích thước": res["Kích thước"] || [],
+      };
 
-        console.log(this.listSpe);
-      }),
-      this.checkProductEdit(this.id);
+      console.log(this.listSpe);
+    }),
+    this.checkProductEdit(this.id);
     window.scrollTo(0, 0);
   },
   computed: {
@@ -782,8 +776,8 @@ export default {
     "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
-.m-admin-product-container-design {
-}
+/* .m-admin-product-container-design {
+} */
 
 /* top */
 .m-admin-product-action {

@@ -7,7 +7,12 @@
       <div class="center:flex-items">
         <span class="right:margin-1">Hiển thị</span>
 
-        <select v-model="currentEntries" class="select" @change="paginateEntries" style="width: 5rem">
+        <select
+          v-model="currentEntries"
+          class="select"
+          @change="paginateEntries"
+          style="width: 5rem"
+        >
           <option v-for="se in showEntries" :key="se" :value="se">
             {{ se }}
           </option>
@@ -15,8 +20,13 @@
         <span class="left:margin-1">mục</span>
       </div>
       <div class="end:flex">
-        <input type="search" class="input px:width-25" placeholder="Tìm kiếm tại đấy..." v-model="searchInput"
-          @keyup="searchEvent" />
+        <input
+          type="search"
+          class="input px:width-25"
+          placeholder="Tìm kiếm tại đấy..."
+          v-model="searchInput"
+          @keyup="searchEvent"
+        />
       </div>
     </div>
     <div>
@@ -44,41 +54,71 @@
           <tr>
             <td></td>
             <td>
-              <input type="search" class="input" placeholder="Lọc mã hóa đơn...." v-model="col.code"
-                @keyup="filterByColumn" />
+              <input
+                type="search"
+                class="input"
+                placeholder="Lọc mã hóa đơn...."
+                v-model="col.code"
+                @keyup="filterByColumn"
+              />
             </td>
             <td>
-              <select name="" class="select" id="" v-model="col.userId" @change="filterByColumn">
-                <option value="">--Lọc Khách hàng --</option>
-                <option v-for="cd in uniqColumData('userId')" :key="cd" :value="cd">
+              <select
+                name=""
+                class="select"
+                id=""
+                v-model="col.userId"
+                @change="filter"
+              >
+                <option value="">--Lọc Khách hàng--</option>
+                <option
+                  v-for="cd in uniqColumData('userId')"
+                  :key="cd"
+                  :value="cd"
+                >
                   {{ cd }}
                 </option>
               </select>
             </td>
             <!-- <td><input type="search" class="input" placeholder="Filter name...." v-model="col.productCode"></td> -->
-            <td>
-
-            </td>
-            <td>
-
-            </td>
+            <td></td>
+            <td></td>
             <td></td>
             <td>
-              <select name="" class="select" id="" v-model="col.staffId" @change="filterByColumn">
-                <option value="">--Lọc nhà nhân viên --</option>
-                <option v-for="cd in uniqColumData('staffId')" :key="cd" :value="cd == '' ? ' ' : cd">
-
-                  <div v-if="cd != ''"> {{ cd }}</div>
-                  <div v-if="cd == ''">Đang chờ xác minh</div>
+              <select
+                name=""
+                class="select"
+                id=""
+                v-model="col.staffId"
+                @change="filter"
+              >
+                <option value="">--Lọc nhà nhân viên--</option>
+                <option
+                  v-for="cd in uniqColumData('staffId')"
+                  :key="cd"
+                  :value="cd"
+                >
+                  <div>{{ cd }}</div>
+                  <!-- <div v-if="cd == ''">Đang chờ xác minh</div> -->
                 </option>
               </select>
             </td>
             <td>
-              <select name="" class="select" id="" v-model="col.status" @change="filterByColumn">
-                <option value="">--Lọc trạng thái --</option>
-                <option v-for="cd in uniqColumData('status')" :key="cd" :value="cd">
-                  <div v-if="cd == 1">Đang xác nhận</div>
+              <select
+                name=""
+                class="select"
+                id=""
+                v-model="col.status"
+                @change="filter"
+              >
+                <option value="">--Lọc trạng thái--</option>
+                <option
+                  v-for="cd in uniqColumData('status')"
+                  :key="cd"
+                  :value="cd"
+                >
                   <div v-if="cd == -2">Hủy</div>
+                  <div v-if="cd == 1">Đang xác nhận</div>
                   <div v-if="cd == 2">Đang đóng hàng</div>
                   <div v-if="cd == 3">Đang chuyển hàng</div>
                   <div v-if="cd == 4">Đang giao hàng</div>
@@ -94,8 +134,8 @@
             <td>{{ index + 1 }}</td>
             <td>{{ td.code }}</td>
             <td>{{ td.userId }}</td>
-            <td style="width: 15%;">{{ formatDate(td.billDate) }}</td>
-            <td style="width: 15%;">{{ formatDate(td.deliveryTime) }}</td>
+            <td style="width: 15%">{{ formatDate(td.billDate) }}</td>
+            <td style="width: 15%">{{ formatDate(td.deliveryTime) }}</td>
             <td>{{ toMoney(td.totalPrice) }}</td>
             <td>
               <template v-if="!td.checkBill">
@@ -104,31 +144,65 @@
               <template v-if="td.checkBill"> Đang chờ xác minh </template>
             </td>
             <!-- button -->
-            <td style="width: 15%;" v-if="!td.checkBill" @click="updateStatus(td)" v-html="checkStatus(td.status)"></td>
+            <td
+              style="width: 15%"
+              v-if="!td.checkBill"
+              @click="updateStatus(td)"
+              v-html="checkStatus(td.status)"
+            ></td>
             <td v-if="td.checkBill">
-              <button type="button" :id="'btn-choose-user-manu' + td.id" class="btn btn-warning"
-                @click="ConfirmBill(td)">
+              <button
+                type="button"
+                :id="'btn-choose-user-manu' + td.id"
+                class="btn btn-warning"
+                @click="ConfirmBill(td)"
+              >
                 Xác minh
               </button>
-              <button type="button" :id="'btn-choose-user-manu' + td.id" class="btn btn-danger ml-1"
-                @click="CancelBill(td)">
+              <button
+                type="button"
+                :id="'btn-choose-user-manu' + td.id"
+                class="btn btn-danger ml-1"
+                @click="CancelBill(td)"
+              >
                 Hủy
               </button>
             </td>
             <td>
               <div class="action">
-                <div id="one" class="button-show-modal m-product-cart-button-clear">
-                  <button class="clear-test" type="button" id="m-into-choose-product" @click="openModal(td.id)">
+                <div
+                  id="one"
+                  class="button-show-modal m-product-cart-button-clear"
+                >
+                  <button
+                    class="clear-test"
+                    type="button"
+                    id="m-into-choose-product"
+                    @click="openModal(td.id)"
+                  >
                     <font-awesome-icon icon="fa-solid fa-plus" />
                   </button>
                 </div>
-                <div class="m-product-cart-button-clear" v-if="td.status != -2 && td.status != 5 && td.status != 1">
-                  <button class="clear-test" type="button" id="m-into-choose-product" @click="CancelBill(td)">
+                <div
+                  class="m-product-cart-button-clear"
+                  v-if="td.status != -2 && td.status != 5 && td.status != 1"
+                >
+                  <button
+                    class="clear-test"
+                    type="button"
+                    id="m-into-choose-product"
+                    @click="CancelBill(td)"
+                  >
                     <font-awesome-icon icon="fa-solid fa-xmark" />
                   </button>
                 </div>
                 <div class="m-product-cart-button-clear" v-if="td.status == 5">
-                  <button class="clear-test" type="button" id="m-into-choose-product" @click="exportpdf(td)">
+                  <button
+                    class="clear-test"
+                    type="button"
+                    id="m-into-choose-product"
+                    @click="exportpdf(td)"
+                  >
                     <font-awesome-icon icon="fas fa-download" />
                   </button>
                 </div>
@@ -147,38 +221,58 @@
       <div class="end:flex">
         <ul class="pagination:nav">
           <li :class="['nav-item', { disabled: currentPage === 1 }]">
-            <a href="#" class="nav-link" @click.prevent="(currentPage = 1), paginateEntries()">
+            <a
+              href="#"
+              class="nav-link"
+              @click.prevent="(currentPage = 1), paginateEntries()"
+            >
               <font-awesome-icon icon="fa-solid fa-angles-left" />
             </a>
           </li>
           <li :class="['nav-item', { disabled: currentPage === 1 }]">
-            <a href="#" class="nav-link" @click.prevent="
-              currentPage < 1 ? (currentPage = 1) : (currentPage -= 1),
-              paginateEntries()
-            ">
+            <a
+              href="#"
+              class="nav-link"
+              @click.prevent="
+                currentPage < 1 ? (currentPage = 1) : (currentPage -= 1),
+                  paginateEntries()
+              "
+            >
               <font-awesome-icon icon="fa-solid fa-angle-left" />
             </a>
           </li>
-          <li v-for="pagi in showPagination" :key="pagi" :class="[
-            'nav-item',
-            { ellipsis: pagi === '...', active: pagi === currentPage },
-          ]">
+          <li
+            v-for="(pagi, index) in showPagination"
+            :key="index"
+            :class="[
+              'nav-item',
+              { ellipsis: pagi === '...', active: pagi === currentPage },
+            ]"
+          >
             <a href="#" class="nav-link" @click.prevent="paginateEvent(pagi)">{{
-                pagi
+              pagi
             }}</a>
           </li>
           <li :class="['nav-item', { disabled: currentPage === allPages }]">
-            <a href="#" class="nav-link" @click.prevent="
-              currentPage > allPages
-                ? (currentPage = allPages)
-                : (currentPage += 1),
-              paginateEntries()
-            ">
+            <a
+              href="#"
+              class="nav-link"
+              @click.prevent="
+                currentPage > allPages
+                  ? (currentPage = allPages)
+                  : (currentPage += 1),
+                  paginateEntries()
+              "
+            >
               <font-awesome-icon icon="fa-solid fa-angle-right" />
             </a>
           </li>
           <li :class="['nav-item', { disabled: currentPage === allPages }]">
-            <a href="#" class="nav-link" @click.prevent="(currentPage = allPages), paginateEntries()">
+            <a
+              href="#"
+              class="nav-link"
+              @click.prevent="(currentPage = allPages), paginateEntries()"
+            >
               <font-awesome-icon icon="fa-solid fa-angles-right" />
             </a>
           </li>
@@ -190,7 +284,9 @@
     <div id="modal-container" style="z-index: 2700">
       <div class="modal-background">
         <div class="modal" style="width: 60%; height: 100vh">
-          <div class="table-wrapper-scroll-modal-y my-custom-scrollbar-modal p-5">
+          <div
+            class="table-wrapper-scroll-modal-y my-custom-scrollbar-modal p-5"
+          >
             <div class="text-center mt-2 header-modal-customer">
               <h2 class="font-weight-bold">Chi tiết hoá đơn</h2>
               <div class="button-show-modal-out">
@@ -246,9 +342,16 @@
               </div>
             </div>
 
-            <div class="m-product-cart-context table-wrapper-scroll-y my-custom-scrollbar">
+            <div
+              class="m-product-cart-context table-wrapper-scroll-y my-custom-scrollbar"
+            >
               <h4 class="font-weight-bold">Danh sách sản phẩm</h4>
-              <el-table :data="getBillDetail.listDetail" border style="width: 100%" height="30vh">
+              <el-table
+                :data="getBillDetail.listDetail"
+                border
+                style="width: 100%"
+                height="30vh"
+              >
                 <el-table-column prop="productCode" label="Mã sản phẩm">
                 </el-table-column>
                 <el-table-column prop="productName" label="Tên sản phẩm">
@@ -354,37 +457,60 @@ export default {
   },
   created() {
     getAllBill().then((res) => {
-      console.log(res)
       this.entries = res;
       this.paginateData(this.entries);
     });
   },
   methods: {
     paginateEntries() {
-      if (this.searchInput.length > 0) {
-        this.searchEntries = $array.search(this.entries, this.searchInput);
-        this.paginateData(this.searchEntries);
+      let isSearch = this.searchInput.length !== 0;
+      const isFilterCol =
+        Object.entries($object.removeBy(this.col, "")).length !== 0;
+      if (!isSearch) {
+        if (!isFilterCol) {
+          this.searchEntries = [];
+          this.col = {
+            id: "",
+            code: "",
+            userId: "",
+            billDate: "",
+            deliveryTime: "",
+            ship: "",
+            totalPrice: "",
+            staffId: "",
+            status: "",
+          };
+          this.paginateData(this.entries);
+        } else {
+          this.searchEntries = [];
+          this.filterByColumn();
+        }
       } else {
-        this.searchEntries = [];
-        this.paginateData(this.entries);
-        this.col = {
-          id: "",
-          code: "",
-          userId: "",
-          billDate: "",
-          deliveryTime: "",
-          ship: "",
-          totalPrice: "",
-          staffId: "",
-          status: "",
-        };
+        if (!isFilterCol) {
+          this.searchEntries = $array.search(this.entries, this.searchInput);
+          this.paginateData(this.searchEntries);
+        } else if (isFilterCol) {
+          this.filterByColumn();
+        }
       }
+      window.scrollTo(0, 60);
     },
     paginateEvent(page) {
       this.currentPage = page;
       this.paginateEntries();
     },
     searchEvent() {
+      this.col = {
+        id: "",
+        code: "",
+        userId: "",
+        billDate: "",
+        deliveryTime: "",
+        ship: "",
+        totalPrice: "",
+        staffId: "",
+        status: "",
+      };
       (this.currentPage = 1), this.paginateEntries();
     },
     paginateData(data) {
@@ -399,11 +525,17 @@ export default {
       return this.searchInput.length <= 0 ? this.entries : this.searchEntries;
     },
     uniqColumData(column) {
-      return $array.unique(this.getCurrentEntries(), column);
+      return $array
+        .unique(this.getCurrentEntries(), column)
+        .filter((value) => value !== "")
+        .sort();
+    },
+    filter() {
+      this.currentPage = 1;
+      this.filterByColumn();
     },
     filterByColumn() {
       const filterCol = $object.removeBy(this.col, "");
-
       let filterData = this.getCurrentEntries();
       if (Object.entries(filterCol).length >= 1) {
         filterData = $array.filtered(this.getCurrentEntries(), filterCol);
@@ -496,8 +628,8 @@ export default {
     // xác minh
     ConfirmBill(bill) {
       this.$swal({
-        title: "Bạn có chắc chắn Muốn Xác minh ?",
-        text: `Đơn đặt hàng có mã: ${bill.code}`,
+        title: "Bạn có chắc chắn muốn Xác minh?",
+        html: `Đơn đặt hàng có mã: <strong>${bill.code}</strong>`,
         type: "question",
         icon: "question",
         showCancelButton: true,
@@ -513,7 +645,6 @@ export default {
 
           verifyBill(bill.id)
             .then((res) => {
-              console.log(res);
               bill.staffId = res;
             })
             .catch((err) => {
@@ -524,8 +655,8 @@ export default {
     },
     CancelBill(bill) {
       this.$swal({
-        title: "Bạn có chắc chắn Muốn Hủy ?",
-        text: `Đơn đặt hàng có mã: ${bill.code}`,
+        title: "Bạn có chắc chắn muốn Hủy?",
+        html: `Đơn đặt hàng có mã: <strong>${bill.code}</strong>`,
         type: "question",
         icon: "question",
         showCancelButton: true,
@@ -554,8 +685,10 @@ export default {
       if (bill.status >= 5 || bill.status == -2 || bill.status == 1) return;
       else {
         this.$swal({
-          title: "Bạn có chắc chắn Muốn thay đổi trạng thái ?",
-          html: `Mã phiếu nhập: <strong>${bill.code}</strong> || ${this.checkStatusText(
+          title: "Bạn có chắc chắn muốn Thay đổi trạng thái?",
+          html: `Mã phiếu nhập: <strong>${
+            bill.code
+          }</strong> || ${this.checkStatusText(
             bill.status
           )} => ${this.checkStatusText(bill.status + 1)}`,
           type: "question",
@@ -572,7 +705,6 @@ export default {
 
             updateStatusBill(bill.id)
               .then((res) => {
-                console.log(res);
                 if (res.data.status == 5)
                   bill.deliveryTime = res.data.deliveryTime;
               })
@@ -598,7 +730,7 @@ export default {
         });
     },
   },
-  mounted() { },
+  mounted() {},
 };
 </script>
 
@@ -612,7 +744,7 @@ export default {
   justify-content: center;
 }
 
-.action>div {
+.action > div {
   padding: 0 0.4rem;
 }
 
