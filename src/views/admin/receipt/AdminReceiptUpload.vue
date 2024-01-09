@@ -73,7 +73,7 @@
                 class="select"
                 id=""
                 v-model="col.productCode"
-                @change="filterByColumn"
+                @change="filter"
               >
                 <option value="">--Lọc mã sản phẩm --</option>
                 <option
@@ -165,8 +165,8 @@
             /></a>
           </li>
           <li
-            v-for="pagi in showPagination"
-            :key="pagi"
+            v-for="(pagi, index) in showPagination"
+            :key="index"
             :class="[
               'nav-item',
               { ellipsis: pagi === '...', active: pagi === currentPage },
@@ -231,7 +231,7 @@
             >
               <table class="table table:border secondary-5:border">
                 <thead>
-                  <th v-for="th in tableHeader" :key="th.name">
+                  <th v-for="th in TableHeaderChild" :key="th.name">
                     <span>{{ th.text }}</span>
                   </th>
                 </thead>
@@ -244,7 +244,7 @@
                         @change="selectProductToReceipt(td)"
                       ></el-checkbox>
                     </td>
-                    <td>{{ index }}</td>
+                    <td>{{ index + 1 }}</td>
                     <td>{{ td.productName }}</td>
                     <td>{{ td.productCode }}</td>
                     <td>{{ toMoney(td.priceSell) }}</td>
@@ -253,7 +253,6 @@
                       <img :src="td.img" alt="" width="100px" height="100px" />
                     </td>
                     <td>{{ td.quantity }}</td>
-                    <td></td>
                   </tr>
                 </tbody>
               </table>
@@ -322,7 +321,6 @@
               <th>Stt</th>
               <th>Tên sản phẩm</th>
               <th>Mã sản phẩm</th>
-
               <th>Giá Nhập</th>
               <th>Ảnh</th>
               <th>Số Lượng nhập</th>
@@ -385,6 +383,7 @@
           @click="addReceipt"
           type="button"
           class="btn btn-outline-primary"
+          v-loading.fullscreen.lock="fullscreenLoading"
         >
           Áp dụng
         </button>
@@ -425,7 +424,7 @@ export default {
         { name: "price", text: "Giá nhập" },
         { name: "img", text: "Ảnh" },
         { name: "quantity", text: "Kho" },
-        { name: "#", text: "Hành động" },
+        { name: "action", text: "Hành động" },
       ],
 
       entries: [],
@@ -468,28 +467,33 @@ export default {
         note: "",
         listProductSelect: [],
       },
+      //thay doi
+      fullscreenLoading: false,
     };
   },
   watch: {},
   computed: {
-    TableHeaderMain() {
-      return this.tableHeader.filter((th) => th.name !== "checkSelect");
-    },
-
     showInfo() {
       return $array.show(
         this.getCurrentEntries(),
         this.currentPage,
         this.currentEntries
-      );
-    },
-    showPagination() {
-      return $array.pagination(this.allPages, this.currentPage, 2);
-    },
-    tableHeader() {
-      return this.columns;
-    },
-    tableData() {
+        );
+      },
+      showPagination() {
+        return $array.pagination(this.allPages, this.currentPage, 2);
+      },
+      tableHeader() {
+        return this.columns;
+      },
+      TableHeaderMain() {
+        return this.tableHeader.filter((th) => th.name !== "checkSelect");
+      },
+  
+      TableHeaderChild() {
+        return this.tableHeader.filter((th) => th.name !== "action");
+      },
+      tableData() {
       return this.filteredEntries;
     },
     sumTotalReceiptComputed() {
@@ -504,33 +508,57 @@ export default {
     });
     getAllUserManu().then((res) => {
       this.listUserManu = res;
+      console.log(res)
     });
   },
   methods: {
     paginateEntries() {
-      if (this.searchInput.length > 0) {
-        this.searchEntries = $array.search(this.entries, this.searchInput);
-        this.paginateData(this.searchEntries);
+      let isSearch = this.searchInput.length !== 0;
+      const { checkSelect, ...filteredCol } = $object.removeBy(this.col, "");
+      const isFilterCol = Object.entries(filteredCol).length !== 0;
+      if (!isSearch) {
+        if (!isFilterCol) {
+          this.searchEntries = [];
+          this.col = {
+            checkSelect: false,
+            id: "",
+            productName: "",
+            productCode: "",
+            priceSell: "",
+            price: "",
+            img: "",
+            quantity: "",
+          };
+          this.paginateData(this.entries);
+        } else {
+          this.searchEntries = [];
+          this.filterByColumn();
+        }
       } else {
-        this.searchEntries = [];
-        this.paginateData(this.entries);
-        this.col = {
-          checkSelect: false,
-          id: "",
-          productName: "",
-          productCode: "",
-          priceSell: "",
-          price: "",
-          img: "",
-          quantity: "",
-        };
+        if (!isFilterCol) {
+          this.searchEntries = $array.search(this.entries, this.searchInput);
+          this.paginateData(this.searchEntries);
+        } else if (isFilterCol) {
+          this.filterByColumn();
+        }
       }
+      window.scrollTo(0, 60);
     },
     paginateEvent(page) {
       this.currentPage = page;
       this.paginateEntries();
     },
     searchEvent() {
+      this.col = {
+        checkSelect: false,
+        id: "",
+        productName: "",
+        productCode: "",
+        priceSell: "",
+        price: "",
+        img: "",
+        quantity: "",
+      };
       (this.currentPage = 1), this.paginateEntries();
     },
     paginateData(data) {
@@ -547,9 +575,12 @@ export default {
     uniqColumData(column) {
       return $array.unique(this.getCurrentEntries(), column);
     },
+    filter() {
+      this.currentPage = 1;
+      this.filterByColumn();
+    },
     filterByColumn() {
       const filterCol = $object.removeBy(this.col, "");
-
       let filterData = this.getCurrentEntries();
       if (Object.entries(filterCol).length >= 1) {
         filterData = $array.filtered(this.getCurrentEntries(), filterCol);
@@ -613,6 +644,7 @@ export default {
       product["quantitySelect"] = +1;
       if (product.checkSelect) {
         this.listProductSelect.push(product);
+        console.log(product)
       } else {
         this.listProductSelect = this.listProductSelect.filter(
           (e) => e != product
@@ -656,24 +688,28 @@ export default {
     // add receipt()
     addReceipt() {
       let self = this;
+      self.fullscreenLoading = true;
       if (self.listProductSelect.length == 0) {
-        self.$swal("", "Vui lòng chọn sản phẩm cần nhập", "error");
+        self.fullscreenLoading = false;
         this.dialogFormVisible = false;
+        self.$swal("", "Vui lòng chọn sản phẩm", "error");
       } else {
         this.receipt.listProductSelect = this.listProductSelect;
 
         addReceipt(this.receipt)
           .then((res) => {
             if (res.status == 200) {
+              self.fullscreenLoading = false;
+              this.dialogFormVisible = false;
               self.$swal("Thành công", res.data, "success").then(function () {
                 self.$router.push("/admin/receipt");
               });
             }
           })
           .catch((err) => {
+            self.fullscreenLoading = false;
             self.$swal("lỗi", err.response.data.data, "error");
           });
-        this.dialogFormVisible = false;
       }
     },
     changeQuantityInput(index) {

@@ -73,9 +73,9 @@
                 class="select"
                 id=""
                 v-model="col.userId"
-                @change="filterByColumn"
+                @change="filter"
               >
-                <option value="">--Lọc nhân viên --</option>
+                <option value="">--Lọc nhân viên--</option>
                 <option
                   v-for="cd in uniqColumData('userId')"
                   :key="cd"
@@ -111,9 +111,9 @@
                 class="select"
                 id=""
                 v-model="col.supplierId"
-                @change="filterByColumn"
+                @change="filter"
               >
-                <option value="">--Lọc nhà cung cấp --</option>
+                <option value="">--Lọc nhà cung cấp--</option>
                 <option
                   v-for="cd in uniqColumData('supplierId')"
                   :key="cd"
@@ -129,19 +129,19 @@
                 class="select"
                 id=""
                 v-model="col.status"
-                @change="filterByColumn"
+                @change="filter"
               >
-                <option value="">--Lọc trạng thái --</option>
+                <option value="">--Lọc trạng thái--</option>
                 <option
                   v-for="cd in uniqColumData('status')"
                   :key="cd"
                   :value="cd"
                 >
-                  <div v-if="cd == 1">Đang xác nhận</div>
                   <div v-if="cd == -1">Hủy</div>
+                  <div v-if="cd == -2">Chưa hoàn tất</div>
+                  <div v-if="cd == 1">Đang xác nhận</div>
                   <div v-if="cd == 2">Đang giao hàng</div>
                   <div v-if="cd == 3">Thành công</div>
-                  <div v-if="cd == -2">Chưa hoàn tất</div>
                 </option>
               </select>
             </td>
@@ -181,7 +181,7 @@
             <!-- button -->
             <td
               v-if="!td.checkChooseManu"
-              @click="td.status == -1 ?'' :updateStatus(td)"
+              @click="td.status == -1 ? '' : updateStatus(td)"
               v-html="checkStatus(td.status)"
             ></td>
             <td v-if="td.checkChooseManu">
@@ -228,7 +228,7 @@
                     id="m-into-choose-product"
                     @click="exportpdf(td)"
                   >
-                       <font-awesome-icon icon="fas fa-download" />
+                    <font-awesome-icon icon="fas fa-download" />
                   </button>
                 </div>
               </div>
@@ -265,8 +265,8 @@
             /></a>
           </li>
           <li
-            v-for="pagi in showPagination"
-            :key="pagi"
+            v-for="(pagi, index) in showPagination"
+            :key="index"
             :class="[
               'nav-item',
               { ellipsis: pagi === '...', active: pagi === currentPage },
@@ -481,28 +481,52 @@ export default {
   },
   methods: {
     paginateEntries() {
-      if (this.searchInput.length > 0) {
-        this.searchEntries = $array.search(this.entries, this.searchInput);
-        this.paginateData(this.searchEntries);
+      let isSearch = this.searchInput.length !== 0;
+      const isFilterCol =
+        Object.entries($object.removeBy(this.col, "")).length !== 0;
+      if (!isSearch) {
+        if (!isFilterCol) {
+          this.searchEntries = [];
+          this.col = {
+            id: "",
+            code: "",
+            userId: "",
+            receiptDate: "",
+            receivedDate: "",
+            totalPrice: "",
+            supplierId: "",
+            status: "",
+          };
+          this.paginateData(this.entries);
+        } else {
+          this.searchEntries = [];
+          this.filterByColumn();
+        }
       } else {
-        this.searchEntries = [];
-        this.paginateData(this.entries);
-        this.col = {
-          id: "",
-          code: "",
-          receiptDate: "",
-          receivedDate: "",
-          totalPrice: "",
-          supplierId: "",
-          status: "",
-        };
+        if (!isFilterCol) {
+          this.searchEntries = $array.search(this.entries, this.searchInput);
+          this.paginateData(this.searchEntries);
+        } else if (isFilterCol) {
+          this.filterByColumn();
+        }
       }
+      window.scrollTo(0, 60);
     },
     paginateEvent(page) {
       this.currentPage = page;
       this.paginateEntries();
     },
     searchEvent() {
+      this.col = {
+        id: "",
+        code: "",
+        userId: "",
+        receiptDate: "",
+        receivedDate: "",
+        totalPrice: "",
+        supplierId: "",
+        status: "",
+      };
       (this.currentPage = 1), this.paginateEntries();
     },
     paginateData(data) {
@@ -517,11 +541,17 @@ export default {
       return this.searchInput.length <= 0 ? this.entries : this.searchEntries;
     },
     uniqColumData(column) {
-      return $array.unique(this.getCurrentEntries(), column);
+      return $array
+        .unique(this.getCurrentEntries(), column)
+        .filter((value) => value !== "")
+        .sort();
+    },
+    filter() {
+      this.currentPage = 1;
+      this.filterByColumn();
     },
     filterByColumn() {
       const filterCol = $object.removeBy(this.col, "");
-
       let filterData = this.getCurrentEntries();
       if (Object.entries(filterCol).length >= 1) {
         filterData = $array.filtered(this.getCurrentEntries(), filterCol);
@@ -615,8 +645,8 @@ export default {
           (e) => e.id == receipt.supplierIdChange
         ).fullName;
         this.$swal({
-          title: "Bạn có chắc chắn không ?",
-          text: `Mã phiếu nhập: ${receipt.code}. Nhà cung cấp: ${supplierName}`,
+          title: "Bạn có chắc chắn không?",
+          html: `Mã phiếu nhập: <strong>${receipt.code}</strong>. Nhà cung cấp: <strong>${supplierName}</strong>`,
           type: "question",
           icon: "question",
           showCancelButton: true,
@@ -655,8 +685,10 @@ export default {
       if (receipt.status >= 3) return;
       else {
         this.$swal({
-          title: "Bạn có chắc chắn Muốn thay đổi trạng thái ?",
-          text: `Mã phiếu nhập: ${receipt.code} || ${this.checkStatusText(
+          title: "Bạn có chắc chắn muốn Thay đổi trạng thái?",
+          html: `Mã phiếu nhập: <strong>${
+            receipt.code
+          }</strong> || ${this.checkStatusText(
             receipt.status
           )} => ${this.checkStatusText(receipt.status + 1)}`,
           type: "question",
@@ -685,8 +717,8 @@ export default {
     },
     cancelReceipt(receipt) {
       this.$swal({
-        title: "Bạn có chắc chắn Muốn hủy ?",
-        text: `Mã phiếu nhập: ${receipt.code}`,
+        title: "Bạn có chắc chắn muốn Hủy?",
+        html: `Mã phiếu nhập: <strong>${receipt.code}</strong>`,
         type: "question",
         icon: "question",
         showCancelButton: true,

@@ -52,7 +52,7 @@
               <a href="#" class="nav-link" style="background-color: black">
                 <i class="nav-icon fas fa-tachometer-alt"></i>
                 <p>
-                  Cập nhập sản phẩm đặc trưng
+                  Cập nhập sản phẩm
                   <i class="right fas fa-angle-left"></i>
                 </p>
               </a>

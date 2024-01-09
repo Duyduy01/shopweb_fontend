@@ -328,7 +328,7 @@ export default {
     this.checkCateActive();
     this.callFilter();
     window.scrollTo(0, 0);
-    console.log(this.listAllColor)
+    console.log(this.listAllColor);
   },
   computed: {
     getCateId() {
@@ -337,7 +337,11 @@ export default {
   },
   watch: {
     getCateId() {
-      this.listFilter.category = [this.getCateId];
+      if (this.getCateId > 0) {
+        this.listFilter.category = [this.getCateId];
+      } else {
+        this.listFilter.category = [];
+      }
       this.listFilter.page = [1];
       this.callFilter();
       window.scrollTo(0, 0);

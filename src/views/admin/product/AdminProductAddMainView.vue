@@ -104,7 +104,7 @@
                 <option value="">chọn danh mục</option>
 
                 <template v-for="(item, key) in listCate">
-                  <option :key="item.id" value="">
+                  <option :key="key" value="">
                     {{ key.split(",")[1] }}
                   </option>
 
@@ -428,6 +428,7 @@ export default {
   data() {
     return {
       listCate: {},
+      sortedCate: {},
       listProductParent: [],
       listBrand: [],
       listSpe: {},
@@ -493,7 +494,9 @@ export default {
   created() {
     getAllCateInaddProduct().then((res) => {
       this.listCate = res;
+      console.log(res);
     }),
+      // this.getOptionKey
       getAllProductByActive().then((res) => {
         this.listProductParent = res;
       }),

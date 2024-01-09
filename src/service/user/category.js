@@ -10,7 +10,14 @@ export async function getAllCate() {
         "Content-Type": "application/json",
       },
     });
-    console.log(res.data.data)
+    // Sắp xếp các key
+    const sortedKeys = Object.keys(res.data.data).sort();
+    // Tạo mảng mới để lưu trữ các khóa theo thứ tự mong muốn
+    const sortedCateArray = sortedKeys.map((key) => ({
+      [key]: res.data.data[key],
+    }));
+    // Kết hợp các phần tử trong mảng để tạo một đối tượng mới đã sắp xếp
+    res.data.data = Object.assign({}, ...sortedCateArray);
     return res.data.data;
   } catch (error) {
     console.error(error);
