@@ -294,7 +294,7 @@ export default {
     getUserDetail()
       .then((res) => {
         console.log(res);
-        this.birthday = new Date(res.birthday)
+        this.birthday = new Date(res.birthday);
         this.user = res;
         this.user.city = this.user.city == null ? " " : +this.user.city;
         this.user.district =
@@ -306,10 +306,10 @@ export default {
       .catch((err) => {
         console.log(err);
       });
+    window.scrollTo(0, 0);
   },
   methods: {
     updateProfileCallApi(e) {
-    
       // let self = this;
       e.preventDefault();
       this.submitted = true;
@@ -319,7 +319,7 @@ export default {
         console.log("error validate");
       } else {
         let birthday = moment(this.birthday).format("YYYY-MM-DD");
-        this.user.birthday = birthday
+        this.user.birthday = birthday;
 
         this.user.city;
         let data = JSON.stringify(this.user);

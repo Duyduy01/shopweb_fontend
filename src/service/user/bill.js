@@ -1,6 +1,8 @@
-import axios from "axios";
 import { getHost } from "@/service/get-host";
+
+var axios = require("axios");
 let url = getHost();
+
 export async function addBill(data) {
   try {
     const res = await axios.post(url + "/api/v3/user/bill", data, {
@@ -8,28 +10,12 @@ export async function addBill(data) {
         "Content-Type": "application/json",
       },
     });
+    console.log(res.data.data)
     return res.data.data;
   } catch (error) {
     console.error(error);
     throw error;
   }
-  // return new Promise((res, rej) => {
-  //   var config = {
-  //     method: "post",
-  //     url: url + "/api/v3/user/bill",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     data,
-  //   };
-  //   axios(config)
-  //     .then(function (response) {
-  //       res(response.data.data);
-  //     })
-  //     .catch(function (error) {
-  //       rej(error);
-  //     });
-  // });
 }
 
 export function getAllBillUser(data) {
@@ -143,7 +129,9 @@ export function getDetailById(billId) {
 export async function addReviewProduct(data) {
   try {
     const res = await axios.post(url + "/api/v3/user/comment/review", data, {
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     return res.data.data;
   } catch (error) {
@@ -154,33 +142,18 @@ export async function addReviewProduct(data) {
 // pay now
 export async function getBillPayNow(data) {
   try {
+    // Log the Authorization header
     const res = await axios.get(url + "/api/v3/user/bill/pay-now" + data, {
       headers: {
         "Content-Type": "application/json",
       },
     });
-    console.log(res.data)
+    console.log(res.data);
     return res.data.data;
   } catch (error) {
     console.error(error);
     throw error;
   }
-  // return new Promise((res, rej) => {
-  //   var config = {
-  //     method: "get",
-  //     url: url + "/api/v3/user/bill/pay-now" + data,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   };
-  //   axios(config)
-  //     .then(function (response) {
-  //       res(response.data.data);
-  //     })
-  //     .catch(function (error) {
-  //       rej(error);
-  //     });
-  // });
 }
 
 export async function addBillPayNow(data) {
@@ -189,27 +162,10 @@ export async function addBillPayNow(data) {
       headers: {
         "Content-Type": "application/json",
       },
-    })
-    return res.data.data
+    });
+    return res.data.data;
   } catch (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    throw error;
   }
-  // return new Promise((res, rej) => {
-  //   var config = {
-  //     method: "post",
-  //     url: url + "/api/v3/user/bill/pay-now",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     data: data,
-  //   };
-  //   axios(config)
-  //     .then(function (response) {
-  //       res(response.data.data);
-  //     })
-  //     .catch(function (error) {
-  //       rej(error);
-  //     });
-  // });
 }

@@ -116,19 +116,19 @@
                     <h6>Giá gốc:</h6>
                   </div>
                   <div class="col-6 mt-2">
-                    <h6>{{ toMoney(this.totalBill) }}</h6>
+                    <h6>{{ toMoney(totalBill) }}</h6>
                   </div>
                   <div class="col-6 mt-2">
                     <h6>Phí ship:</h6>
                   </div>
                   <div class="col-6 mt-2">
-                    <h6>{{ toMoney(this.freeShip) }}</h6>
+                    <h6>{{ toMoney(shippingCost) }}</h6>
                   </div>
                   <div class="col-6 mt-2">
                     <h6>Tổng tiền thanh toán:</h6>
                   </div>
                   <div class="col-6 mt-2">
-                    <h6>{{ toMoney(this.totalBillPay) }}</h6>
+                    <h6>{{ toMoney(totalBillPay) }}</h6>
                   </div>
                   <div class="col-12 mt-2">
                     <button
@@ -187,7 +187,7 @@ export default {
     return {
       activeValue: 0,
       listProduct: [],
-      freeShip: 0,
+      shippingCost: 0,
       totalBill: 0,
       totalBillPay: 0,
       errorMessage: "Chưa có sản phẩm nào !",
@@ -295,9 +295,9 @@ export default {
     },
     // tính tiền
     totalMoney() {
-      let { totalBill, freeShip, totalBillPay } = sumMoney(this.listProduct);
+      let { totalBill, shippingCost, totalBillPay } = sumMoney(this.listProduct);
       this.totalBill = totalBill;
-      this.freeShip = freeShip;
+      this.shippingCost = shippingCost;
       this.totalBillPay = totalBillPay;
     },
     // covert tien

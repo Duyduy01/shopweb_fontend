@@ -325,8 +325,18 @@
                   <div>{{ formatDate(getBillDetail.deliveryTime) }}</div>
                 </div>
                 <div class="col-6 d-flex mb-3">
-                  <div class="font-weight-bold mr-2">Tổng giá:</div>
+                  <div class="font-weight-bold mr-2">Tổng tiền hàng:</div>
                   <div>{{ toMoney(getBillDetail.totalPrice) }}</div>
+                </div>
+                <div class="col-6 d-flex mb-3">
+                  <div class="font-weight-bold mr-2">
+                    Tổng tiền phí vận chuyển:
+                  </div>
+                  <div>{{ toMoney(getBillDetail.shippingCost) }}</div>
+                </div>
+                <div class="col-6 d-flex mb-3">
+                  <div class="font-weight-bold mr-2">Tổng thanh toán:</div>
+                  <div>{{ toMoney(getBillDetail.invoiceValue) }}</div>
                 </div>
                 <div class="col-6 d-flex mb-3">
                   <div class="font-weight-bold mr-2">Tên nhân viên:</div>
@@ -368,13 +378,14 @@
         </div>
       </div>
     </div>
+    <p>The valueBill {{ valueBill }}</p>
+    <button @click="changeValue">click</button>
   </div>
 </template>
 
 <script>
 import { $array, $object } from "alga-js";
 import moment from "moment";
-
 import {
   getAllBill,
   getBillDetail,
@@ -383,8 +394,9 @@ import {
   updateStatusBill,
   exportBill,
 } from "@/service/admin/bill";
-
 import $ from "jquery";
+import { mapGetters } from "vuex";
+
 export default {
   name: "AdminProduct",
   components: {
@@ -438,6 +450,10 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["getBill"]),
+    valueBill() {
+      return this.getBill;
+    },
     showInfo() {
       return $array.show(
         this.getCurrentEntries(),
@@ -455,6 +471,13 @@ export default {
       return this.filteredEntries;
     },
   },
+  watch: {
+    "$store.state.bill"(newValue, oldValue) {
+      console.log("New bill value:", newValue);
+      console.log("Old bill value:", oldValue);
+      // Log ra các thay đổi trong state khi có sự thay đổi
+    },
+  },
   created() {
     getAllBill().then((res) => {
       this.entries = res;
@@ -462,6 +485,9 @@ export default {
     });
   },
   methods: {
+    changeValue() {
+      this.$store.dispatch("addBill", 1);
+    },
     paginateEntries() {
       let isSearch = this.searchInput.length !== 0;
       const isFilterCol =
@@ -588,6 +614,7 @@ export default {
         });
 
         this.getBillDetail = res;
+        console.log(this.getBillDetail);
       });
     },
     formatDate(data) {

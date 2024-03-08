@@ -14,12 +14,15 @@ import "alga-css/dist/alga.min.css";
 
 import "bootstrap";
 import CKEditor from "@ckeditor/ckeditor5-vue2";
-import style from "@/assets/css/style.css";
+import "./assets/css/style.css";
+import "./assets/css/color.css";
+import "./plugins/webSocket.js";
 
 Vue.use(VueSweetalert2);
 Vue.use(VueAxios, axios, Vuelidate);
 Vue.use(CKEditor);
-Vue.use(style);
+// Vue.use(style);
+// Vue.use(color);
 
 initialize(store, router);
 

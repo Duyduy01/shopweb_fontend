@@ -294,6 +294,8 @@ import {
 import { getSpeById } from "@/service/admin/speciality";
 import Comment from "@/views/user/product/ProductCommentView.vue";
 import { addCart } from "@/service/user/cart";
+import { toMoney } from "@/service/support/exchange.js";
+
 export default {
   props: ["productId"],
   components: {
@@ -358,6 +360,7 @@ export default {
     });
   },
   methods: {
+    toMoney,
     // color
     chooseColor(key, id, labelActiveId) {
       this.cart.quantity = 1;
@@ -476,6 +479,7 @@ export default {
       } else {
         this.cart.productId = productList[0].id;
         this.cart.totalQuantity = productList[0].quantity;
+        console.log(this.cart.totalQuantity)
       }
     },
     // add cart
@@ -527,14 +531,6 @@ export default {
     handleQuantity(value) {
       console.log(value);
     },
-    // covert tien
-    toMoney(totalprice) {
-      var formatter = new Intl.NumberFormat("it-IT", {
-        style: "currency",
-        currency: "VND",
-      });
-      return formatter.format(totalprice);
-    },
     async favoriteProduct() {
       let value = this.$root.$refs.userHeader.favoriteProductHeader(
         this.parentId
@@ -548,5 +544,121 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import url("@/assets/user/css/product-detail");
+.m-banner {
+    width: 100%;
+    background-color: rgb(0, 0, 0);
+}
+
+.m-banner-details {
+    width: 87%;
+    margin: auto;
+    padding: 1rem;
+}
+
+.m-banner-details>span {
+    margin: 0 1rem 0 1rem;
+}
+
+
+/* img parent */
+.p-d-img-parent {
+    width: 100%;
+    overflow: hidden;
+    margin: 0 1rem 1rem 1rem
+}
+
+.p-d-img-parent>img {
+    width: 100%;
+    transition: transform 1s ease;
+}
+
+.p-d-img-parent:hover>img {
+    transform: scale(1.5);
+}
+
+/* choose-size */
+/* list-product-detail */
+.list-product-detail{
+    width: 100%;
+    margin: 0 2rem 2rem 2rem
+}
+/* btn-add-cart */
+.btn-add-cart{
+    width: 100%;
+    margin: 2rem 0
+}
+.btn-add-cart>div>button{
+    width: 100%;
+    margin: .5rem 0
+}
+
+
+/* foot */
+.foot-detail{
+    font-size: 1rem;
+}
+
+
+/*  color */
+.color{
+    margin: 0 0 0 1rem;
+}
+.check-color{
+    width:100%;
+    border:1px solid rgba(120, 115, 115, 0.414);
+    padding: .5rem;
+    text-align:center;
+
+}
+
+/* love-product */
+#love-product{
+    padding: .5rem;
+    width: 100%;
+    height: 2.4rem;
+    background-color: #fff;
+    border:none;
+    font-size: 1.5rem;
+}
+
+/* SIZE */
+
+.size{
+    margin: 0 0 0 1rem;
+}
+.check-size{
+    width:100%;
+    border:1px solid rgba(120, 115, 115, 0.414);
+    padding: .5rem ;
+    text-align:center;
+
+}
+
+/* product-quantity */
+.product-quantity{
+    margin: 0 0 0 1rem;
+}
+
+/* active */
+.active{
+    border:2px solid black
+    
+}
+/* inactive */
+.inactive{
+    background-color:rgba(131, 125, 125, 0.192)
+}
+
+/* validate size */
+.product-content{
+
+    border:1px solid red;
+    
+}
+
+.messager{
+
+    color:red;
+
+}
 </style>

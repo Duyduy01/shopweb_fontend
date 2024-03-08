@@ -1,46 +1,47 @@
 <template>
-  <div>
-    <div class="container">
-      <div class="l-page-desgin">
-        <div class="l-detail-page-forgot forgot-design">
-          <div>
-            <h1>Xác nhận email</h1>
-          </div>
-          <div>
-            <p>
-              Chúng tôi sẽ gửi cho bạn một email hãy kiểm tra và xác nhập code.
-            </p>
-          </div>
-        </div>
-        <form method="" @submit.prevent="verify" ref="form">
-          <div class="form-login-input-page">
-            <div class="l-themes-page">
-              <label for="email">Mã xác nhận *</label>
+  <div class="ctnr">
+    <div class="verify xs-flex fd-column ai-center">
+      <div class="verify_title ta-center">
+        <h2>Xác nhận email</h2>
+        <p>Chúng tôi sẽ gửi cho bạn một email hãy kiểm tra và xác nhập code.</p>
+      </div>
+      <div class="form_wrapper">
+        <form @submit.prevent="verify" ref="form">
+          <!-- <div class="l-themes-page">
+            <label for="email">Mã xác nhận:</label>
+          </div> -->
+          <div class="form_insert">
+            <div class="form_group p-relative">
+              <input
+                class="p-absolute"
+                type="text"
+                id="email"
+                placeholder="Mã xác nhận"
+                name="verificationCode"
+                v-model="code"
+              />
             </div>
-            <input
-              type="text"
-              id="email"
-              placeholder="Mã xác nhận *"
-              name="verificationCode"
-              v-model="code"
-            />
             <!-- <div class="error" v-if="submitted && !$v.code.required" >Nhập mã xác nhận</div>
-                <div class="error" v-if="!$v.code.minLength">Mã xác nhận phải có {{$v.code.$params.maxLength.max}} kí tự.</div>
-                 <div class="error" v-if="!$v.code.maxLength">Mã xác nhận phải có {{$v.code.$params.maxLength.max}} kí tự.</div> -->
+                    <div class="error" v-if="!$v.code.minLength">Mã xác nhận phải có {{$v.code.$params.maxLength.max}} kí tự.</div>
+                     <div class="error" v-if="!$v.code.maxLength">Mã xác nhận phải có {{$v.code.$params.maxLength.max}} kí tự.</div> -->
           </div>
-
-          <div class="l-list-button-page">
-            <div class="l-button-login-page-forgot text-center">
-              <button type="submit" id="login" class="submit">Xác nhận</button>
-              <button
-                class="ml-2 sendTo"
-                type="button"
-                id="login"
-                @click="sendCodeToEmail"
-              >
-                Gửi lại
-              </button>
-            </div>
+          <div class="form_button xs-flex js-around ai-center">
+            <button
+              type="submit"
+              id="login"
+              class="submit"
+              v-loading.fullscreen.lock="fullscreenLoading"
+            >
+              <span>Xác nhận</span>
+            </button>
+            <button
+              type="button"
+              id="login"
+              @click="sendCodeToEmail"
+              v-loading.fullscreen.lock="fullscreenLoading"
+            >
+              <span>Gửi lại</span>
+            </button>
           </div>
         </form>
       </div>
@@ -65,6 +66,7 @@ export default {
     return {
       code: "",
       submitted: false,
+      fullscreenLoading: false,
     };
   },
   created() {
@@ -89,11 +91,12 @@ export default {
       if (this.$v.$invalid) {
         await this.$swal({
           icon: "error",
-          title: "Xác nhận",
+          title: "Xác nhận thất bại",
           text: "Mã xác nhận không đúng!",
           timer: 1500,
         });
       } else {
+        this.fullscreenLoading = true;
         try {
           const data = JSON.stringify({
             email: this.email,
@@ -101,6 +104,7 @@ export default {
           });
           const res = await verifyEmail(data);
           console.log(res);
+          this.fullscreenLoading = false;
           await this.$swal({
             icon: "success",
             title: "Thành công",
@@ -109,11 +113,12 @@ export default {
           });
           this.$router.push("/dang-nhap");
         } catch (error) {
+          this.fullscreenLoading = false;
           console.error(error);
           console.error("that bai");
           await this.$swal({
             icon: "error",
-            title: "Xác nhận",
+            title: "Xác nhận thất bại",
             text: "Mã xác nhận không đúng!",
             timer: 1500,
           });
@@ -121,24 +126,27 @@ export default {
       }
     },
     async sendCodeToEmail() {
+      this.fullscreenLoading = true;
       try {
         const data = JSON.stringify({
           email: this.email,
         });
         const res = await sendToCode(data);
         console.log(res);
+        this.fullscreenLoading = false;
         this.$swal({
           icon: "success",
           title: "Gửi mã xác nhận thành công",
           text: "Quý khách vui lòng kiểm tra gmail sử dụng để đăng ký tài khoản!",
-          timer: 1500,
+          timer: 3000,
         });
       } catch (error) {
         console.log(error);
         console.log("that bai");
+        this.fullscreenLoading = false;
         this.$swal({
           icon: "error",
-          title: "Xác nhận thất bại",
+          title: "Gửi mã xác nhận thất bại",
           text: "Quý khách vui lòng gửi lại mã xác nhận!",
           timer: 1500,
         });
@@ -149,152 +157,109 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.l-page-desgin {
-  width: 60%;
-  padding: 2rem;
-  margin: auto;
+.verify {
+  padding: 3rem 0;
 }
-
-/* tiêu đề */
-.l-detail-page {
-  font-weight: 100;
-  display: flex;
-  justify-content: center;
+/*------------------------------------*/
+/* title */
+/*------------------------------------*/
+.verify_title {
+  padding-bottom: 3rem;
 }
-
-.l-detail-page > div {
-  padding: 1.5rem 0 0 1rem;
+.verify_title h2 {
+  font-size: 3.1rem;
+  line-height: 1.5;
 }
-
-.l-detail-page > .l-themes-login-page {
-  position: relative;
-  padding: 1.5rem;
+.verify_title p {
+  padding-top: 0.5rem;
 }
-
-.l-detail-page > .l-themes-login-page::after {
-  position: absolute;
-  width: 0.5rem;
-  height: 0.5rem;
-  content: "";
-  background-color: black;
-  top: 0;
-  bottom: 1;
-  left: 1;
-  right: 0;
-  margin: 3rem 0 0 0.5rem;
+/*------------------------------------*/
+/* form */
+/*------------------------------------*/
+.form_wrapper {
+  width: 36rem;
+  border: 1px solid rgba(16, 16, 16, 0.1);
+  box-shadow: 0 0 4px rgba(16, 16, 16, 0.1);
+  border-radius: 0.8rem;
+  padding: 1.6rem;
+  margin-bottom: 1rem;
 }
-
-.l-detail-page > .l-themes-register-page > h1 > a {
-  text-decoration: none;
-  color: rgba(54, 53, 53, 0.815);
+.form_insert {
+  margin-bottom: 0.8rem;
 }
-
-.l-detail-page > .l-themes-register-page > h1:hover > a {
-  color: black;
+.form_group,
+.form_group input {
+  background: var(--color-11);
 }
-
-/* lable */
-.l-themes-page > label {
-  font-size: 1.1rem;
+.form_group {
+  height: 5.4rem;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--color-10);
+  border-radius: 0.8rem;
+  padding: 1.2rem;
+  margin-bottom: 0.4rem;
 }
-
-/* input */
-.form-login-input-page {
-  padding: 1.1rem;
-  width: 100%;
-  margin: auto;
+.form_group input,
+.form_button span {
+  font-weight: 400;
+  line-height: 150%;
 }
-
-.form-login-input-page > input {
-  width: 100%;
-  padding: 0.2rem 0.6rem;
-  border: 1px solid rgba(218, 217, 217, 0.815);
-  height: 3rem;
+.form_group input {
+  border: none;
+  width: 89%;
+  height: 2.5rem;
+  left: 1.2rem;
 }
-
-.l-list-button-page {
-  width: 97%;
-  display: flex;
-  justify-content: space-between;
-  margin: 1.2rem auto;
+.form_button {
+  margin-top: 1.6rem;
 }
-
-.l-footer-page > .forgot-password-page > a {
-  text-decoration: none;
-  color: rgba(54, 53, 53, 0.815);
-  line-height: 3.5rem;
-  font-size: 1.1rem;
+.form_button button {
+  width: 13rem;
+  padding: 0.7rem 2rem 0.8rem;
+  background: linear-gradient(135deg, #fce6f7, #d5d0f0);
+  border-radius: 99rem;
 }
-
-.l-footer-page > .forgot-password-page:hover > a {
-  color: black;
+.form_button span {
+  background: linear-gradient(135deg, #ed55c7, #6756ca);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  font-family: var(--font-inter);
+  margin: 0 0.8rem;
 }
-
-/* register */
-
-.l-list-button-page > .l-button-register-page {
-  width: 100%;
-  margin: 1rem 0;
+::placeholder {
+  color: var(--color-8);
 }
-
-.l-list-button-page > .l-button-register-page > .register {
-  height: 3.6rem;
-  width: 100%;
-  padding: 0.8rem;
-
-  background-color: black;
-  border: 1px solid black;
-  color: #fff;
+::-moz-placeholder {
+  color: var(--color-8);
 }
-
-.l-list-button-page > .l-button-register-page:hover > .register {
-  background-color: #fff;
-  border: 1px solid black;
-  color: black;
+::-webkit-input-placeholder {
+  color: var(--color-8);
 }
-
-/* forgot */
-.forgot-design {
-  margin: 2rem 0;
-  text-align: center;
+@media only screen and (max-width: 380px) {
+  .verify_title {
+    padding-bottom: unset;
+  }
+  .form_wrapper {
+    width: 30rem;
+    border: unset;
+    box-shadow: unset;
+  }
 }
-
-.l-list-button-page > .l-button-login-page-forgot {
-  width: 100%;
+@media only screen and (min-width: 576px) {
+  .verify {
+    padding: 9rem 0;
+  }
 }
-
-.l-list-button-page > .l-button-login-page-forgot > button {
-  height: 3.6rem;
-
-  padding: 0.8rem;
-
-  color: #fff;
+@media only screen and (min-width: 768px) {
 }
-
-.l-list-button-page > .l-button-login-page-forgot > .submit {
-  background-color: black;
-  border: 1px solid black;
+@media only screen and (min-width: 992px) {
 }
-
-.l-list-button-page > .l-button-login-page-forgot > .submit:hover {
-  background-color: #fff;
-  border: 1px solid black;
-  color: black;
+@media only screen and (min-width: 1200px) {
 }
-
-/* l-button-login-page-forgot-cancel */
-.l-button-login-page-forgot-cancel {
-  padding: 0.8rem;
-}
-
-.sendTo {
-  color: #fff;
-  background-color: black;
-}
-
-.l-list-button-page > .l-button-login-page-forgot > .sendTo:hover {
-  background-color: #fff;
-  border: 1px solid black;
-  color: black;
+@media only screen and (min-width: 1400px) {
 }
 </style>

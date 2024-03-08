@@ -1,8 +1,8 @@
 <template>
   <div>
-    <Header />
-    <app-main />
-    <Footer />
+    <Header></Header>
+    <app-main></app-main>
+    <Footer></Footer>
   </div>
 </template>
 
@@ -13,7 +13,7 @@ import AppMain from "@/components/layouts/user/elements/AppMain.vue";
 // import { favorite } from "@/service/user/favorite";
 
 export default {
-  name: "UserLayout",
+  // name: "UserLayout",
   components: {
     Header,
     Footer,
@@ -24,18 +24,4 @@ export default {
 };
 </script>
 
-<style lang="scss">
-* {
-  margin: 0;
-  padding: 0;
-  outline: none;
-  box-sizing: border-box;
-  box-sizing: border-box;
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI",
-    Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol";
-}
-html {
-  font-size: 14px;
-}
-</style>
+<style lang="scss"></style>

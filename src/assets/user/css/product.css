@@ -53,7 +53,7 @@
 /* product-action */
 .product-action{
   padding: 1rem;
-  z-index: 200;
+  z-index: 3;
   position: absolute;
   top:0;
   bottom: 0;

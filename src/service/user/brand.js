@@ -1,6 +1,8 @@
-var axios = require("axios");
 import { getHost } from "@/service/get-host";
+
+var axios = require("axios");
 let url = getHost();
+
 
 export async function getAllBrand() {
   try {
@@ -14,22 +16,6 @@ export async function getAllBrand() {
     console.error(error);
     throw error;
   }
-  // return new Promise((res, rej) => {
-  //   var config = {
-  //     method: "get",
-  //     url: url + "/api/v1/user/brand",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   };
-  //   axios(config)
-  //     .then(function (response) {
-  //       res(response.data.data);
-  //     })
-  //     .catch(function (error) {
-  //       rej(error);
-  //     });
-  // });
 }
 
 export async function getProductByBrand(data) {
@@ -44,23 +30,6 @@ export async function getProductByBrand(data) {
     console.error(error);
     throw error;
   }
-  // return new Promise((res, rej) => {
-  //   var config = {
-  //     method: "post",
-  //     url: url + "/api/v1/user/brand",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     data: JSON.stringify(data),
-  //   };
-  //   axios(config)
-  //     .then(function (response) {
-  //       res(response.data.data);
-  //     })
-  //     .catch(function (error) {
-  //       rej(error);
-  //     });
-  // });
 }
 
 export async function getTotalByBrand(data) {
@@ -76,21 +45,4 @@ export async function getTotalByBrand(data) {
     console.error(error);
     throw error;
   }
-  // return new Promise((res, rej) => {
-  //   var config = {
-  //     method: "post",
-  //     url: url + "/api/v1/user/brand/total",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     data: JSON.stringify(data),
-  //   };
-  //   axios(config)
-  //     .then(function (response) {
-  //       res(response.data.data);
-  //     })
-  //     .catch(function (error) {
-  //       rej(error);
-  //     });
-  // });
 }

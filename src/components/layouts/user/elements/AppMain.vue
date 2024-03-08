@@ -4,10 +4,9 @@
       <router-view />
     </transition>
 
-    <button class="top-main" @click="scrollTop">
+    <!-- <button class="top-main" @click="scrollTop">
       <font-awesome-icon icon="fas fa-arrow-up" />
-    </button>
-
+    </button> -->
   </section>
 </template>
 
@@ -18,7 +17,7 @@ export default {
     scrollTop() {
       window.scrollTo({
         top: 0,
-        behavior: "smooth"
+        behavior: "smooth",
       });
     },
   },

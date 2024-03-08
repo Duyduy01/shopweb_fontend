@@ -44,7 +44,7 @@ export function initialize(store, router) {
     if (error.response.status === 401) {
       store.commit("LOGOUT");
       router.push("/dang-nhap");
-      window.location.reload()
+      // window.location.reload();
     }
 
     return Promise.reject(error);

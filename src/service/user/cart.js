@@ -137,15 +137,15 @@ export function getAllTotalitem() {
 export function sumMoney(listProduct) {
   let totalBill = 0;
   let totalBillPay = 0;
-  let freeShip = 0;
+  let shippingCost = 0;
 
   listProduct.forEach((e) => {
     totalBill += e.totalPrice;
   });
   if (totalBill < 5000000 && totalBill > 0) {
-    freeShip = 30000;
-    totalBillPay += freeShip;
+    shippingCost = 30000;
+    totalBillPay += shippingCost;
   }
   totalBillPay += totalBill;
-  return { totalBill, freeShip, totalBillPay };
+  return { totalBill, shippingCost, totalBillPay };
 }

@@ -1,0 +1,46 @@
+/*------------------------------------*/
+/* component ProductViewUser */
+/*------------------------------------*/
+.products_wrapper .prsM_select_box .vs__dropdown-toggle {
+  position: relative;
+  height: 3.6rem;
+  min-width: 19rem;
+  border: none;
+  appearance: none;
+  background: var(--color-13);
+  padding: 0 3.7rem 0 1.7rem;
+  border-radius: 99rem;
+  line-height: 3.6rem;
+  z-index: 6;
+  cursor: pointer;
+}
+
+.products_wrapper .prsM_select_box .vs__dropdown-toggle .vs__search,
+.products_wrapper .prsM_select_box .vs__dropdown-toggle .vs__clear {
+  display: none;
+}
+
+.products_wrapper .prsM_select_box .vs__dropdown-toggle .vs__selected,
+.products_wrapper .prsM_select_box .vs__dropdown-toggle .vs__actions {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+.products_wrapper .prsM_select_box .vs__dropdown-toggle .vs__actions {
+  position: absolute;
+  right: 1.7rem;
+}
+
+.products_wrapper .prsM_select_box .vs__dropdown-menu {
+  position: absolute;
+  background-color: var(--color-primary);
+  border: 1px solid var(--color-14);
+  top: 100%;
+  left: 0;
+  right: 0;
+  border-bottom-left-radius: 1.6rem;
+  border-bottom-right-radius: 1.6rem;
+  padding-top: 2.5rem;
+  margin-top: -2rem;
+  z-index: 5;
+}

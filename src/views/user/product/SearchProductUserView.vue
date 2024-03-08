@@ -13,7 +13,11 @@
         </h4>
       </div>
       <div>
-        <el-input placeholder="Nhập tên sản phẩm cần tìm !" prefix-icon="el-icon-search" v-model="searchObject.search">
+        <el-input
+          placeholder="Nhập tên sản phẩm cần tìm !"
+          prefix-icon="el-icon-search"
+          v-model="searchObject.search"
+        >
         </el-input>
       </div>
     </div>
@@ -28,22 +32,30 @@
         <div class="mt-5 col-3" v-for="e in listData" :key="e.id">
           <div class="product-list">
             <router-link :to="'/chi-tiet-san-pham/' + e.id">
-              <div class="single-gallery-image" :style="'background: url(' + e.img + ')'"></div>
+              <div
+                class="single-gallery-image"
+                :style="'background: url(' + e.img + ')'"
+              ></div>
             </router-link>
 
             <div class="product-action">
-              <button class="icon-heart" @click="favoriteProduct(e)" v-html="!e.favorite ? dislike : like"></button>
+              <button
+                class="icon-heart"
+                @click="favoriteProduct(e)"
+                v-html="!e.favorite ? dislike : like"
+              ></button>
             </div>
           </div>
           <div class="product-detail">
             <div class="product-name">
-                 <router-link :to="'/chi-tiet-san-pham/' + e.id"> {{ e.productName }} </router-link>
+              <router-link :to="'/chi-tiet-san-pham/' + e.id">
+                {{ e.productName }}
+              </router-link>
             </div>
             <div class="price-sell">
               <span v-if="e.sale != 0">
-                <span style="color: black; text-decoration: line-through">{{ toMoney(e.priceSell / ((100 - e.sale) /
-                    100))
-                }}
+                <span style="color: black; text-decoration: line-through"
+                  >{{ toMoney(e.priceSell / ((100 - e.sale) / 100)) }}
                 </span>
 
                 <span>- {{ toMoney(e.priceSell) }} (-{{ e.sale }})%</span>
@@ -58,8 +70,14 @@
     </div>
     <!-- pagination -->
     <div style="width: 100%; text-align: center" class="mt-4">
-      <el-pagination background layout="prev, pager, next" :total="totalPageSearch" :page-size="1"
-        :current-page="searchObject.page" @current-change="handleCurrentChange">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="totalPageSearch"
+        :page-size="1"
+        :current-page="searchObject.page"
+        @current-change="handleCurrentChange"
+      >
       </el-pagination>
     </div>
   </div>
@@ -88,10 +106,12 @@ export default {
       checkPagination: false,
     };
   },
-  created() { },
+  created() {
+    window.scrollTo(0, 0);
+  },
   computed: {
     listData() {
-      console.log(this.listProduct)
+      console.log(this.listProduct);
       return this.listProduct;
     },
     searchProduct() {
@@ -173,7 +193,7 @@ export default {
   padding: 1rem;
 }
 
-.m-banner-details>span {
+.m-banner-details > span {
   margin: 0 1rem 0 1rem;
 }
 
@@ -185,7 +205,7 @@ export default {
   justify-content: flex-end;
 }
 
-.m-header>h1 {
+.m-header > h1 {
   color: black;
 }
 

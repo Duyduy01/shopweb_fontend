@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <section class="header">
     <div class="header-v2">
       <section class="announcement xs-none lg-block">
         <div class="ctnr xs-flex js-between ai-center">
@@ -33,7 +33,7 @@
           <div class="header_logo">
             <!-- <img src="@/assets/img/logo.jpg" alt="" srcset="" /> -->
             <router-link to="/">
-              <img src="@/assets/logo/SANHO-logos_black.png" alt="" srcset="" />
+              <img src="@/assets/logo/SANHO-logos_black.png" alt="Duy shop" srcset="" />
             </router-link>
           </div>
           <!-- mobi -->
@@ -334,7 +334,7 @@
       class="header_scrim p-fixed xs-block top-0 right-0 bottom-0 left-0"
       :class="{ scrim_active: scrim }"
     ></div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -368,7 +368,7 @@ export default {
     this.checkUser();
     getAllCate().then((res) => {
       this.category = res;
-      console.log(this.category);
+      // console.log(this.category);
     });
 
     this.totalItemByCart();
@@ -570,7 +570,7 @@ export default {
 .header {
   position: sticky;
   top: 0;
-  z-index: 2700;
+  z-index: 1000;
 }
 .header-v2 {
   background-color: var(--bg-primary);
@@ -591,17 +591,18 @@ ul.announcement_content > li > a {
 ul.announcement_content > li > a::after {
   content: "";
   position: absolute;
-  width: 0%;
-  transition: all 0.6s;
-}
-ul.announcement_content > li > a::after {
+  width: 100%;
+  height: 0.05em;
   left: 0;
   bottom: 0;
-  height: 0.05em;
   background-color: var(--bg-primary);
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease-out;
 }
 ul.announcement_content > li > a:hover::after {
-  width: 100%;
+  transform: scaleX(1);
+  transform-origin: bottom left;
 }
 .annoucement_shopname {
   padding: 0 1rem 0 0;
@@ -773,7 +774,7 @@ ul.header_desktop_menu > li > a {
   padding: 0 1rem;
   color: var(--color-second);
   line-height: 3.75;
-  font-weight: 600;
+  font-weight: 500;
 }
 ul.header_desktop_menu > li > a::before {
   content: "";
@@ -865,7 +866,7 @@ ul.header_desktop_menu > li:hover > .header_brand_submenu li {
   border-bottom-color: rgba(0, 0, 0, 0.1);
 }
 .header_brand_submenu > li:hover,
-.header_login_child > li > a:hover {
+.header_login_child > li:hover > a {
   background-color: rgba(78, 74, 74, 0.29);
 }
 .header_brand_submenu > li > a {

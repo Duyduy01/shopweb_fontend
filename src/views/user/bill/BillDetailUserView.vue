@@ -82,8 +82,16 @@
                       </div>
                       <div>
                         <div class="d-flex">
-                          <label>Tổng tiền</label>
-                          <span>: {{ toMoney(b.totalPrice + b.ship) }}</span>
+                          <label>Tổng tiền hàng</label>
+                          <span>: {{ toMoney(b.totalPrice) }}</span>
+                        </div>
+                        <div class="d-flex">
+                          <label>Tổng tiền phí vận chuyển</label>
+                          <span>: {{ toMoney(b.shippingCost) }}</span>
+                        </div>
+                        <div class="d-flex">
+                          <label>Tổng tiền thanh toán</label>
+                          <span>: {{ toMoney(b.invoiceValue) }}</span>
                         </div>
                       </div>
                     </div>
@@ -229,6 +237,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
+import { toMoney } from "@/service/support/exchange.js";
 
 import {
   getAllBillByStatus,
@@ -282,6 +291,7 @@ export default {
     });
   },
   methods: {
+    toMoney,
     // getAllBill
     async getAllBill(page) {
       try {
@@ -296,14 +306,6 @@ export default {
     handleCurrentChange(val) {
       this.getAllBill(val);
       window.scrollTo(0, 0);
-    },
-    // covert tien
-    toMoney(totalprice) {
-      var formatter = new Intl.NumberFormat("it-IT", {
-        style: "currency",
-        currency: "VND",
-      });
-      return formatter.format(totalprice);
     },
     // format date
     formatDate(data) {

@@ -252,19 +252,19 @@
                     <h6>Giá gốc:</h6>
                   </div>
                   <div class="col-6 mt-2">
-                    <h6>{{ toMoney(this.totalBill) }}</h6>
+                    <h6>{{ toMoney(totalBill) }}</h6>
                   </div>
                   <div class="col-6 mt-2">
                     <h6>Phí ship:</h6>
                   </div>
                   <div class="col-6 mt-2">
-                    <h6>{{ toMoney(this.freeShip) }}</h6>
+                    <h6>{{ toMoney(shippingCost) }}</h6>
                   </div>
                   <div class="col-6 mt-2">
                     <h6>Tổng tiền thanh toán:</h6>
                   </div>
                   <div class="col-6 mt-2">
-                    <h6>{{ toMoney(this.totalBillPay) }}</h6>
+                    <h6>{{ toMoney(totalBillPay) }}</h6>
                   </div>
 
                   <div class="col-12 mt-2">
@@ -302,6 +302,7 @@
                     >
                       Quay lại giỏ hàng
                     </button>
+                    <button @click="sendBill">send ws</button>
                   </div>
                 </div>
               </div>
@@ -319,6 +320,8 @@ import { getAll, sumMoney } from "@/service/user/cart";
 import { getCity, getDistrict, getWard } from "@/service/user/address";
 import { getUserDetail } from "@/service/user/user";
 import { addBill } from "@/service/user/bill";
+import { toMoney } from "@/service/support/exchange.js";
+import { sendBillAdded } from "@/plugins/webSocket.js";
 
 export default {
   data() {
@@ -327,7 +330,7 @@ export default {
       // giỏ hàng
       listProduct: [],
       errorMessage: "Chưa có sản phẩm nào !",
-      freeShip: 0,
+      shippingCost: 0,
       totalBill: 0,
       totalBillPay: 0,
       // bill
@@ -381,6 +384,10 @@ export default {
       });
   },
   methods: {
+    sendBill() {
+      sendBillAdded(120);
+    },
+    toMoney,
     checkGetListProduct() {
       getAll()
         .then((res) => {
@@ -396,9 +403,11 @@ export default {
         });
     },
     totalMoney() {
-      let { totalBill, freeShip, totalBillPay } = sumMoney(this.listProduct);
+      let { totalBill, shippingCost, totalBillPay } = sumMoney(
+        this.listProduct
+      );
       this.totalBill = totalBill;
-      this.freeShip = freeShip;
+      this.shippingCost = shippingCost;
       this.totalBillPay = totalBillPay;
     },
     // {
@@ -412,13 +421,6 @@ export default {
     //   this.totalBillPay = this.totalBill + this.feeShip;
     // },
     // covert tien
-    toMoney(totalprice) {
-      var formatter = new Intl.NumberFormat("it-IT", {
-        style: "currency",
-        currency: "VND",
-      });
-      return formatter.format(totalprice);
-    },
     // bill
     chooseCity() {
       this.listDistrict = [];
@@ -507,16 +509,17 @@ export default {
         " - " +
         textCity;
 
-      console.log(addressDetail);
-
       this.bill.addressDetail = addressDetail;
+      this.bill.shippingCost = this.shippingCost;
+      this.bill.invoiceValue = this.totalBillPay;
       let data = JSON.stringify(this.bill);
       console.log(data);
       addBill(data)
         .then((res) => {
           this.$root.$refs.userHeader.totalItemByCart();
+          sendBillAdded(res);
           self.$swal("Thành công", res.data, "success").then(function () {
-            self.$router.push("/hoan-thanh-dat-hang");
+            // self.$router.push("/hoan-thanh-dat-hang");
           });
         })
         .catch((err) => {

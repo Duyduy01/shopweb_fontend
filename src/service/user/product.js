@@ -13,24 +13,6 @@ export async function getAllProduct() {
     console.error(error);
     throw error;
   }
-  // return new Promise((res, rej) => {
-  //   var config = {
-  //     method: 'get',
-  //     url: url + '/api/v1/user/product',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //   };
-  //   axios(config)
-  //     .then(function (response) {
-
-  //       res(response.data.data);
-  //     })
-  //     .catch(function (error) {
-  //       rej(error);
-  //     });
-
-  // })
 }
 
 export function filterProduct(data) {

@@ -1,164 +1,168 @@
 <template>
-  <div>
-    <div class="main">
-      <div class="container">
-        <div class="l-page-desgin">
-          <div class="l-detail-page">
-            <div class="l-themes-login-page">
-              <h1>Đăng ký</h1>
-            </div>
-
-            <div class="l-themes-register-page">
-              <h1>
-                <router-link to="/dang-nhap">Đăng nhập</router-link>
-              </h1>
-            </div>
-          </div>
-          <form method="POST" @submit.prevent="register" ref="form">
-            <div class="form-login-input-page">
-              <div class="l-themes-page">
-                <label for="email">Email *</label>
+  <div class="ctnr">
+    <div class="login xs-flex ai-center js-center">
+      <div class="login_title xs-none lg-block">
+        <h2>Đăng ký để nhận ưu đãi đặc biệt từ chúng tôi</h2>
+      </div>
+      <div class="login_form">
+        <div class="form_wrapper">
+          <form @submit.prevent="register" ref="form">
+            <div class="form_insert">
+              <div class="form_group p-relative xs-flex js-center ai-center">
+                <input
+                  class="p-absolute"
+                  type="email"
+                  id="email"
+                  placeholder="Email"
+                  name="username"
+                  v-model.trim="$v.username.$model"
+                />
               </div>
-              <input
-                type="email"
-                id="email"
-                placeholder="Email*"
-                name="username"
-                v-model.trim="$v.username.$model"
-              />
-              <div class="error" v-if="submitted && !$v.username.required">
+              <div class="form_error" v-if="submitted && !$v.username.required">
                 Tài khoản không thể để trống
               </div>
-              <div class="error" v-if="!$v.username.email">
+              <div class="form_error" v-if="!$v.username.email">
                 Trường này phải là email.
               </div>
             </div>
-            <div class="form-login-input-page">
-              <div class="l-themes-page">
-                <label for="password">Mật khẩu *</label>
+            <div class="form_insert">
+              <div class="form_group p-relative xs-flex js-center ai-center">
+                <input
+                  class="p-absolute"
+                  type="password"
+                  id="password"
+                  placeholder="Mật khẩu"
+                  name="password"
+                  v-model.trim="$v.password.$model"
+                />
               </div>
-              <input
-                type="password"
-                id="password"
-                placeholder="Mật khẩu *"
-                name="password"
-                v-model.trim="$v.password.$model"
-              />
-              <div class="error" v-if="submitted && !$v.password.required">
+              <div class="form_error" v-if="submitted && !$v.password.required">
                 Mật khẩu không thể để trống
               </div>
-              <div class="error" v-if="!$v.password.minLength">
+              <div class="form_error" v-if="!$v.password.minLength">
                 Mật khẩu phải có ít nhất
                 {{ $v.password.$params.minLength.min }} kí tự.
               </div>
-              <div class="error" v-if="!$v.password.maxLength">
+              <div class="form_error" v-if="!$v.password.maxLength">
                 Mật khẩu phải ít hơn {{ $v.password.$params.maxLength.max }} kí
                 tự.
               </div>
             </div>
-            <div class="form-login-input-page">
-              <div class="l-themes-page">
-                <label for="password">Nhập lại mật khẩu *</label>
+            <div class="form_insert">
+              <div class="form_group p-relative xs-flex js-center ai-center">
+                <input
+                  class="p-absolute"
+                  type="password"
+                  id="password"
+                  placeholder="Xác nhận lại mật khẩu"
+                  name="password"
+                  v-model.trim="$v.repeatPassword.$model"
+                />
               </div>
-              <input
-                type="password"
-                id="password"
-                placeholder="Mật khẩu *"
-                name="password"
-                v-model.trim="$v.repeatPassword.$model"
-              />
               <div
-                class="error"
+                class="form_error"
                 v-if="submitted && !$v.repeatPassword.required"
               >
                 Mật khẩu không thể để trống
               </div>
-              <div class="error" v-if="!$v.repeatPassword.sameAsPassword">
-                Nhập lại mật khẩu.
+              <div
+                class="form_error"
+                v-if="
+                  submitted &&
+                  $v.repeatPassword.required &&
+                  !$v.repeatPassword.sameAsPassword
+                "
+              >
+                Mật khẩu đã nhập không khớp
               </div>
             </div>
-            <div class="form-login-input-page">
-              <div class="l-themes-page">
-                <label for="fullname">Họ và tên</label>
+            <div class="form_insert">
+              <div class="form_group p-relative xs-flex js-center ai-center">
+                <input
+                  class="p-absolute"
+                  type="text"
+                  id="fullname"
+                  placeholder="Họ và tên"
+                  name="fullName"
+                  v-model.trim="$v.fullName.$model"
+                />
               </div>
-              <input
-                type="text"
-                id="fullname"
-                placeholder="Họ và tên"
-                name="fullName"
-                v-model.trim="$v.fullName.$model"
-              />
-              <div class="error" v-if="submitted && !$v.fullName.required">
+              <div class="form_error" v-if="submitted && !$v.fullName.required">
                 Họ và tên không thể để trống
               </div>
-              <div class="error" v-if="!$v.fullName.minLength">
+              <div class="form_error" v-if="!$v.fullName.minLength">
                 Họ và tên phải có ít nhất
                 {{ $v.fullName.$params.minLength.min }} kí tự.
               </div>
-              <div class="error" v-if="!$v.fullName.maxLength">
+              <div class="form_error" v-if="!$v.fullName.maxLength">
                 Họ và tên phải ít hơn {{ $v.fullName.$params.maxLength.max }} kí
                 tự.
               </div>
             </div>
 
-            <div class="form-login-input-page">
-              <div class="l-themes-page">
-                <label for="phone">Số điện thoại *</label>
+            <div class="form_insert">
+              <div class="form_group p-relative xs-flex js-center ai-center">
+                <input
+                  class="p-absolute"
+                  type="text"
+                  id="phone"
+                  placeholder="Số điện thoại"
+                  name="phone"
+                  v-model.trim="$v.phone.$model"
+                />
               </div>
-              <input
-                type="text"
-                id="phone"
-                placeholder="Số điện thoại*"
-                name="phone"
-                v-model.trim="$v.phone.$model"
-              />
-              <div class="error" v-if="submitted && !$v.phone.required">
+              <div class="form_error" v-if="submitted && !$v.phone.required">
                 Số điện thoại không thể để trống
               </div>
-              <div class="error" v-if="!$v.phone.numeric">
+              <div class="form_error" v-if="!$v.phone.numeric">
                 Số điện thoại phải là số
               </div>
-              <div class="error" v-if="!$v.phone.minLength">
+              <div
+                class="form_error"
+                v-if="!$v.phone.minLength && $v.phone.numeric"
+              >
                 Số điện thoại phải có ít nhất
                 {{ $v.phone.$params.minLength.min }} kí tự.
               </div>
-              <div class="error" v-if="!$v.phone.maxLength">
+              <div
+                class="form_error"
+                v-if="!$v.phone.maxLength && $v.phone.numeric"
+              >
                 Số điện thoại phải ít hơn
                 {{ $v.phone.$params.maxLength.max }} kí tự.
               </div>
             </div>
-            <div class="form-login-input-page">
-              <div class="l-themes-page">
-                <label for="phone">Địa chỉ *</label>
+            <div class="form_insert">
+              <div class="form_group p-relative xs-flex js-center ai-center">
+                <input
+                  class="p-absolute"
+                  type="text"
+                  id="phone"
+                  placeholder="Địa chỉ"
+                  name="address"
+                  v-model.trim="$v.address.$model"
+                />
               </div>
-              <input
-                type="text"
-                id="phone"
-                placeholder="Địa chỉ*"
-                name="address"
-                v-model.trim="$v.address.$model"
-              />
-              <div class="error" v-if="submitted && !$v.address.required">
+              <div class="form_error" v-if="submitted && !$v.address.required">
                 Địa chỉ không thể để trống
               </div>
-              <div class="error" v-if="!$v.address.minLength">
+              <div class="form_error" v-if="!$v.address.minLength">
                 Địa chỉ phải có ít nhất
                 {{ $v.address.$params.minLength.min }} kí tự.
               </div>
             </div>
-            <div class="l-list-button-page">
-              <div class="l-button-register-page">
-                <button
-                  type="click"
-                  id="register"
-                  class="register"
-                  v-loading.fullscreen.lock="fullscreenLoading"
-                >
-                  Đăng ký
-                </button>
-              </div>
-            </div>
+            <button
+              class="form_button xs-inline-block ta-center w-100"
+              type="submit"
+              v-loading.fullscreen.lock="fullscreenLoading"
+            >
+              <span>Đăng ký</span>
+            </button>
           </form>
+          <div class="register_link ta-center">
+            Bạn đã có tài khoản?
+            <router-link to="/dang-nhap">Đăng nhập</router-link>
+          </div>
         </div>
       </div>
     </div>
@@ -259,7 +263,6 @@ export default {
           });
           const router = "/xac-minh/" + this.username;
           this.$router.push(router);
-          this.fullscreenLoading = false;
         } catch (error) {
           this.fullscreenLoading = false;
           console.log(error);
@@ -267,7 +270,7 @@ export default {
           await this.$swal({
             icon: "error",
             title: "Đăng ký lỗi",
-            text: "email đã tồn tại !",
+            text: "Email đã tồn tại!",
             timer: 3000,
           });
         }
@@ -286,158 +289,144 @@ export default {
 </script>
 
 <style lang="css" scoped>
-.l-page-desgin {
-  width: 60%;
-  padding: 2rem;
-  margin: 4rem auto;
-  background-color: rgba(172, 170, 170, 0.141);
-  border-radius: 10px;
+.login {
+  padding: 3rem 0;
+  column-gap: 4.8rem;
 }
-
-/* tiêu đề */
-.l-detail-page {
-  font-weight: 100;
-  display: flex;
-  justify-content: center;
+/*------------------------------------*/
+/* title */
+/*------------------------------------*/
+.login_title {
+  width: 39rem;
 }
-
-.l-detail-page > div {
-  padding: 1rem 0 0 1rem;
+.login_title h2 {
+  font-size: 6.2rem;
+  font-weight: 600;
+  font-style: normal;
+  line-height: 1.55;
+  margin: 0;
 }
-
-.l-detail-page > .l-themes-login-page {
-  position: relative;
-  padding: 1rem;
+/*------------------------------------*/
+/* form */
+/*------------------------------------*/
+.form_insert {
+  margin-bottom: 0.8rem;
 }
-
-.l-detail-page > .l-themes-login-page::after {
+.form_wrapper {
+  /* background: #f9f9f9; */
+  width: 36rem;
+  border: 1px solid rgba(16, 16, 16, 0.1);
+  box-shadow: 0 0 4px rgba(16, 16, 16, 0.1);
+  border-radius: 0.8rem;
+  padding: 1.6rem;
+}
+.form_group {
+  height: 5.4rem;
+  background: var(--color-primary);
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--color-10);
+  border-radius: 0.8rem;
+  padding: 1.2rem;
+  margin-bottom: 0.4rem;
+}
+/* .form_group label {
+  padding-top: 0;
   position: absolute;
-  width: 0.5rem;
-  height: 0.5rem;
-  content: "";
-  background-color: black;
-  top: 0;
-  bottom: 1;
-  left: 1;
-  right: 0;
-  margin: 3rem 0 0 0.5rem;
+  left: 12px;
+  margin: 0;
+} */
+.form_group input,
+.form_check a,
+.form_button span {
+  font-weight: 400;
+  line-height: 150%;
 }
-
-.l-detail-page > .l-themes-register-page > h1 > a {
-  text-decoration: none;
-  color: rgba(54, 53, 53, 0.815);
+.form_group input {
+  border: none;
+  width: 89%;
+  height: 2.5rem;
+  left: 1.2rem;
 }
-
-.l-detail-page > .l-themes-register-page > h1:hover > a {
-  color: black;
+.form_error {
+  color: var(--color-red);
+  padding: 0 1rem;
 }
-
-/* lable */
-.l-themes-page > label {
-  font-size: 1.1rem;
+.form_check {
+  margin: 0.8rem 0;
 }
-
-/* input */
-.form-login-input-page {
-  padding: 1.1rem;
-  width: 100%;
-  margin: auto;
+.form_check a {
+  font-size: 1.2rem;
+  color: var(--color-9);
 }
-
-.form-login-input-page > input {
-  width: 95%;
-  padding: 0.2rem 0.6rem;
-  border: 1px solid rgba(218, 217, 217, 0.815);
-  height: 3rem;
+.form_button {
+  margin-top: 1.6rem;
+  padding: 0.7rem 2rem 0.8rem;
+  background: linear-gradient(135deg, #fce6f7, #d5d0f0);
+  border-radius: 99rem;
 }
-
-.l-list-button-page {
-  width: 97%;
-  display: flex;
-  justify-content: space-between;
-  margin: 1.2rem auto;
+.form_button span {
+  background: linear-gradient(135deg, #ed55c7, #6756ca);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  font-family: var(--font-inter);
+  margin: 0 0.8rem;
 }
-
-.l-footer-page > .forgot-password-page > a {
-  text-decoration: none;
-  color: rgba(54, 53, 53, 0.815);
-  line-height: 3.5rem;
-  font-size: 1.1rem;
+.register_link {
+  margin: 1.9rem 0;
 }
-
-.l-footer-page > .forgot-password-page:hover > a {
-  color: black;
+.register_link a {
+  background: linear-gradient(135deg, #ed55c7, #6756ca);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
 }
-
-/* register */
-
-.l-list-button-page > .l-button-register-page {
-  width: 100%;
-  margin: 1rem 0;
+::placeholder {
+  color: var(--color-8);
 }
-
-.l-list-button-page > .l-button-register-page > .register {
-  height: 3.6rem;
-  width: 95%;
-  padding: 0.8rem;
-
-  background-color: black;
-  border: 1px solid black;
-  color: #fff;
+::-moz-placeholder {
+  color: var(--color-8);
 }
-
-.l-list-button-page > .l-button-register-page:hover > .register {
-  background-color: #fff;
-  border: 1px solid black;
-  color: black;
+::-webkit-input-placeholder {
+  color: var(--color-8);
 }
-
-/* forgot */
-.forgot-design {
-  margin: 2rem 0;
-  text-align: center;
+/* .form_group input:invalid ~ label,
+.form_group input ~ label {
+  font-size: 14px;
+  line-height: 150%;
+  color: #b3b3b3;
+  top: 50%;
+  transform: translateY(-50%);
+  /* transition: all 0.2s ease-in-out;
+} */
+/* .form_group input:valid:not(:placeholder-shown) ~ label {
+  font-size: 12px;
+  line-height: 150%;
+  top: 11%;
+  transform: unset;
+} */
+@media only screen and (max-width: 380px) {
+  .form_wrapper {
+    width: 30rem;
+    border: unset;
+    box-shadow: unset;
+  }
 }
-
-.l-list-button-page > .l-button-login-page-forgot {
-  width: 100%;
+@media only screen and (min-width: 576px) {
+  .login {
+    padding: 9rem 0;
+  }
 }
-
-.l-list-button-page > .l-button-login-page-forgot > button {
-  height: 3.6rem;
-  width: 98%;
-  padding: 0.8rem;
-
-  color: #fff;
+@media only screen and (min-width: 768px) {
 }
-
-.l-list-button-page > .l-button-login-page-forgot > .submit {
-  background-color: black;
-  border: 1px solid black;
+@media only screen and (min-width: 992px) {
 }
-
-.l-list-button-page > .l-button-login-page-forgot:hover > .submit {
-  background-color: #fff;
-  border: 1px solid black;
-  color: black;
+@media only screen and (min-width: 1200px) {
 }
-
-/* l-button-login-page-forgot-cancel */
-.l-button-login-page-forgot-cancel {
-  padding: 0.8rem;
-}
-
-.l-button-login-page-forgot-cancel > button {
-  height: 3.6rem;
-  width: 94.7%;
-
-  border: 1px solid black;
-  text-decoration: none;
-  color: black;
-  background-color: #fff;
-}
-
-.l-button-login-page-forgot-cancel > button:hover {
-  color: #fff;
-  background-color: black;
+@media only screen and (min-width: 1400px) {
 }
 </style>

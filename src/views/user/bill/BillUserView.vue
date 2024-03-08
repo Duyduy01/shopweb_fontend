@@ -43,7 +43,9 @@ export default {
       ListBill: [],
     };
   },
-  created() {},
+  created() {
+    window.scrollTo(0, 0);
+  },
   methods: {
     // handleClick() {
     //   console.log(this.billIndex);

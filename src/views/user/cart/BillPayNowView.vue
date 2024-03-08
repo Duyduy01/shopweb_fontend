@@ -250,16 +250,16 @@
                 <div class="row text-center pl-2 pr-2 pb-4">
                   <div class="col-6 mt-2"><h6>Giá gốc:</h6></div>
                   <div class="col-6 mt-2">
-                    <h6>{{ toMoney(this.totalBill) }}</h6>
+                    <h6>{{ toMoney(totalBill) }}</h6>
                   </div>
                   <div class="col-6 mt-2"><h6>Phí ship:</h6></div>
                   <div class="col-6 mt-2">
-                    <h6>{{ toMoney(freeShip) }}</h6>
+                    <h6>{{ toMoney(shippingCost) }}</h6>
                   </div>
 
                   <div class="col-6 mt-2"><h6>Tổng tiền thanh toán:</h6></div>
                   <div class="col-6 mt-2">
-                    <h6>{{ toMoney(this.totalBillPay) }}</h6>
+                    <h6>{{ toMoney(totalBillPay) }}</h6>
                   </div>
 
                   <div class="col-12 mt-2">
@@ -314,6 +314,7 @@ import { sumMoney } from "@/service/user/cart";
 import { getCity, getDistrict, getWard } from "@/service/user/address";
 import { getUserDetail } from "@/service/user/user";
 import { getBillPayNow, addBillPayNow } from "@/service/user/bill";
+import { toMoney } from "@/service/support/exchange.js";
 
 export default {
   props: ["productId", "quantity"],
@@ -324,7 +325,7 @@ export default {
       listProduct: [],
       errorMessage: "Chưa có sản phẩm nào !",
       totalBill: 0,
-      freeShip: 0,
+      shippingCost: 0,
       totalBillPay: 0,
       // bill
       bill: {
@@ -379,18 +380,19 @@ export default {
       });
   },
   methods: {
+    toMoney,
     checkGetListProduct() {
       let seft = this;
-      let data = `?productId=${this.productId}&quantity=${this.quantity}`;
+      let data = `?productId=${seft.productId}&quantity=${seft.quantity}`;
       getBillPayNow(data)
         .then((res) => {
           if (Array.isArray(res)) {
             console.log(res);
-            this.listProduct = res;
+            seft.listProduct = res;
           } else {
-            this.listProduct = [];
+            seft.listProduct = [];
           }
-          this.totalMoney();
+          seft.totalMoney();
         })
         .catch((err) => {
           console.log(err);
@@ -399,18 +401,10 @@ export default {
         });
     },
     totalMoney() {
-      let { totalBill, freeShip, totalBillPay } = sumMoney(this.listProduct);
+      let { totalBill, shippingCost, totalBillPay } = sumMoney(this.listProduct);
       this.totalBill = totalBill;
-      this.freeShip = freeShip;
+      this.shippingCost = shippingCost;
       this.totalBillPay = totalBillPay;
-    },
-    // covert tien
-    toMoney(totalprice) {
-      var formatter = new Intl.NumberFormat("it-IT", {
-        style: "currency",
-        currency: "VND",
-      });
-      return formatter.format(totalprice);
     },
     // bill
     chooseCity() {
@@ -500,9 +494,9 @@ export default {
         " - " +
         textCity;
 
-      console.log(addressDetail);
-
       this.bill.addressDetail = addressDetail;
+      this.bill.shippingCost = this.shippingCost;
+      this.bill.invoiceValue = this.totalBillPay;
       let data = JSON.stringify(this.bill);
       console.log(data);
       addBillPayNow(data)
