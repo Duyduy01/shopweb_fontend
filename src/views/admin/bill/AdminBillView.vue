@@ -136,7 +136,7 @@
             <td>{{ td.userId }}</td>
             <td style="width: 15%">{{ formatDate(td.billDate) }}</td>
             <td style="width: 15%">{{ formatDate(td.deliveryTime) }}</td>
-            <td>{{ toMoney(td.totalPrice) }}</td>
+            <td>{{ toMoney(td.invoiceValue) }}</td>
             <td>
               <template v-if="!td.checkBill">
                 {{ td.staffId }}
@@ -378,8 +378,6 @@
         </div>
       </div>
     </div>
-    <p>The valueBill {{ valueBill }}</p>
-    <button @click="changeValue">click</button>
   </div>
 </template>
 
@@ -472,10 +470,9 @@ export default {
     },
   },
   watch: {
-    "$store.state.bill"(newValue, oldValue) {
-      console.log("New bill value:", newValue);
-      console.log("Old bill value:", oldValue);
-      // Log ra các thay đổi trong state khi có sự thay đổi
+    //update all bill view
+    getBill(newValue) {
+      this.filteredEntries.unshift(newValue);
     },
   },
   created() {
@@ -614,7 +611,6 @@ export default {
         });
 
         this.getBillDetail = res;
-        console.log(this.getBillDetail);
       });
     },
     formatDate(data) {

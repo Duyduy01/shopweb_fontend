@@ -302,7 +302,6 @@
                     >
                       Quay lại giỏ hàng
                     </button>
-                    <button @click="sendBill">send ws</button>
                   </div>
                 </div>
               </div>
@@ -384,9 +383,6 @@ export default {
       });
   },
   methods: {
-    sendBill() {
-      sendBillAdded(120);
-    },
     toMoney,
     checkGetListProduct() {
       getAll()
@@ -513,13 +509,13 @@ export default {
       this.bill.shippingCost = this.shippingCost;
       this.bill.invoiceValue = this.totalBillPay;
       let data = JSON.stringify(this.bill);
-      console.log(data);
+  
       addBill(data)
         .then((res) => {
           this.$root.$refs.userHeader.totalItemByCart();
           sendBillAdded(res);
           self.$swal("Thành công", res.data, "success").then(function () {
-            // self.$router.push("/hoan-thanh-dat-hang");
+            self.$router.push("/hoan-thanh-dat-hang");
           });
         })
         .catch((err) => {

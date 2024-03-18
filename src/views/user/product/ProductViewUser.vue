@@ -182,7 +182,7 @@
             </div>
           </div>
         </div>
-        <div class="products_main w-100">
+        <div class="products_main xs-flex fd-column w-100" id="products_main">
           <div class="xs-flex js-flex-end">
             <div class="prsM_select p-relative xs-none lg-block">
               <v-select
@@ -212,7 +212,10 @@
             </div>
           </div>
           <!-- PRODUCT -->
-          <div class="">
+          <div class="main_wrapper p-relative flex-1">
+            <product-loader :isLoaded="isLoaded"></product-loader>
+            <!-- <template v-if="loaded"> -->
+            <!-- <div v-show="loaded"> -->
             <div class="col-12" v-if="listProduct.length == 0">
               <h3 class="ta-center">Không có sản phẩm nào!</h3>
             </div>
@@ -251,29 +254,37 @@
                         </h4>
                         <div class="prsM_it_sold xs-flex fw-wrap">
                           <div class="prsM_it_price">
-                            <span v-if="e.sale != 0" class="xs-flex fd-column">
-                              <span class="prsM_it_sell">
-                                <s>
+                            <div v-if="e.sale != 0" class="xs-flex fd-column">
+                              <span class="prsM_it_sell discount_percent">
+                                <s class="prsM_it_oldPrice">
                                   {{
                                     toMoney(
                                       e.priceSell / ((100 - e.sale) / 100)
                                     )
                                   }}
                                 </s>
+                                -{{ e.sale }}%
                               </span>
-
-                              <span class="prsM_it_sale"
-                                >{{ toMoney(e.priceSell) }} (-{{
-                                  e.sale
-                                }}%)</span
+                              <div class="xs-flex fw-wrap js-between">
+                                <span class="prsM_it_sale"
+                                  >{{ toMoney(e.priceSell) }}
+                                </span>
+                                <span class="prsM_it_totalSold"
+                                  >Đã bán: {{ e.totalPay }}</span
+                                >
+                              </div>
+                            </div>
+                            <div
+                              class="prsM_it_sell xs-flex js-between fw-wrap"
+                              v-if="e.sale == 0"
+                            >
+                              <span>
+                                {{ toMoney(e.priceSell) }}
+                              </span>
+                              <span class="prsM_it_totalSold"
+                                >Đã bán: {{ e.totalPay }}</span
                               >
-                            </span>
-                            <span class="prsM_it_sell" v-if="e.sale == 0">
-                              {{ toMoney(e.priceSell) }}
-                            </span>
-                          </div>
-                          <div class="prsM_it_totalSold xs-flex ai-end">
-                            <span>Đã bán: {{ e.totalPay }}</span>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -302,6 +313,8 @@
                 </el-pagination>
               </div>
             </template>
+            <!-- </div> -->
+            <!-- </template> -->
           </div>
         </div>
       </div>
@@ -316,12 +329,14 @@ import { getAllBrand } from "@/service/admin/brand";
 import { getAllSpe, getTypeSpe } from "@/service/admin/speciality";
 import { toMoney } from "@/service/support/exchange.js";
 import vSelect from "vue-select";
+import ProductLoader from "@/components/layouts/loader/ProductsLoader.vue";
 import "vue-select/dist/vue-select.css";
 
 export default {
   name: "UserProduct",
   components: {
     vSelect,
+    ProductLoader,
   },
   props: ["cateId"],
   data() {
@@ -345,6 +360,8 @@ export default {
         page: [1],
         limit: [32],
       },
+      //loader
+      isLoaded: false,
       //pagination
       totalPage: 1,
       sort: { value: "1", label: "Mới Nhất" },
@@ -361,6 +378,9 @@ export default {
   computed: {
     getCateId() {
       return this.cateId;
+    },
+    loaded() {
+      return this.isLoaded;
     },
   },
   watch: {
@@ -397,8 +417,10 @@ export default {
       });
     });
     this.checkCateActive();
-    this.callFilter();
     window.scrollTo(0, 0);
+  },
+  mounted() {
+    this.callFilter();
   },
   methods: {
     toMoney,
@@ -463,17 +485,21 @@ export default {
       return keys;
     },
     callFilter() {
+      this.isLoaded = false;
+      document.getElementById("products_main").style.height = "100vh";
       let data = JSON.stringify(this.listFilter);
-      filterTotalPage(data).then((res) => {
-        this.totalPage = +res;
-      });
-      filterProduct(data).then((res) => {
-        this.listProduct = res;
-        // console.log(this.listProduct);
-      });
-
-      this.getTotalPage;
-      window.scrollTo(0, 0);
+      Promise.all([filterTotalPage(data), filterProduct(data)])
+        .then(([totalPageRes, productRes]) => {
+          this.totalPage = +totalPageRes;
+          this.listProduct = productRes;
+          this.handleLoad();
+          this.getTotalPage;
+          window.scrollTo(0, 0);
+        })
+        .catch((error) => {
+          // console.error("Error occurred:", error);
+          this.handleLoad();
+        });
     },
     checkCateActive() {
       if (this.cateId != 0) {
@@ -488,6 +514,13 @@ export default {
       this.listFilter.sort = [this.sort.value];
       this.listFilter.page = [1];
       this.callFilter();
+    },
+    handleLoad() {
+      // Kiểm tra khi phần tử hoặc component đã load xong
+      setTimeout(() => {
+        this.isLoaded = true;
+        document.getElementById("products_main").style.height = "unset";
+      }, 1000);
     },
     async favoriteProduct(product) {
       let value = this.$root.$refs.userHeader.favoriteProductHeader(product.id);
@@ -606,6 +639,9 @@ label.active > span {
 .products_main {
   padding-left: 0;
 }
+.products_main .main_wrapper {
+  overflow: hidden;
+}
 .products_main .prsM_ctnr {
   margin: 0 -0.4rem;
 }
@@ -669,8 +705,12 @@ label.active > span {
 .prsM_it_price {
   flex: 1 0;
 }
-.prsM_it_sale {
+.prsM_it_sell.discount_percent {
   color: var(--color-red);
+}
+.prsM_it_oldPrice {
+  margin-right: 0.3rem;
+  color: var(--color-8);
 }
 .prsM_it_totalSold {
   color: var(--color-5);
@@ -686,10 +726,17 @@ label.active > span {
     margin: 0 -0.6rem;
   }
   .products_main .prsM_box {
-    padding: 0 0.6rem;
+    padding: 0.7rem 0.6rem;
   }
 }
 @media only screen and (min-width: 768px) {
+  .prsM_it_review svg {
+    width: 1.2rem;
+    margin: 0 0.3rem;
+  }
+  .prsM_it_totalRate {
+    font-size: 1.4rem;
+  }
 }
 @media only screen and (min-width: 992px) {
   .products_main {

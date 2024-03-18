@@ -35,24 +35,38 @@ export function filterProduct(data) {
   });
 }
 
-export function filterTotalPage(data) {
-  return new Promise((res, rej) => {
-    var config = {
-      method: "post",
-      url: url + "/api/v1/user/product/filter/total/page",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
-    axios(config)
-      .then(function (response) {
-        res(response.data.data);
-      })
-      .catch(function (error) {
-        rej(error);
-      });
-  });
+export async function filterTotalPage(data) {
+  try {
+    const res = await axios.post(
+      url + "/api/v1/user/product/filter/total/page",
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return res.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+  // return new Promise((res, rej) => {
+  //   var config = {
+  //     method: "post",
+  //     url: url + "/api/v1/user/product/filter/total/page",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     data: data,
+  //   };
+  //   axios(config)
+  //     .then(function (response) {
+  //       res(response.data.data);
+  //     })
+  //     .catch(function (error) {
+  //       rej(error);
+  //     });
+  // });
 }
 
 export function searchProductByNameSearch(data) {

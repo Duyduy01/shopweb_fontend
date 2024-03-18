@@ -57,25 +57,37 @@
                 </h4>
                 <div class="home_pr_it_sold xs-flex fw-wrap">
                   <div class="home_pr_it_price">
-                    <span v-if="item.sale != 0" class="xs-flex fd-column">
-                      <span class="home_pr_it_sell">
-                        <s>
+                    <div class="xs-flex fd-column" v-if="item.sale != 0">
+                      <span class="home_pr_it_sell discount_percent">
+                        <s class="home_pr_it_oldPrice">
                           {{
                             toMoney(item.priceSell / ((100 - item.sale) / 100))
                           }}
                         </s>
+                        -{{ item.sale }}%
                       </span>
 
-                      <span class="home_pr_it_sale"
-                        >{{ toMoney(item.priceSell) }} (-{{ item.sale }})%</span
-                      >
-                    </span>
-                    <span class="home_pr_it_sell" v-if="item.sale == 0">
-                      {{ toMoney(item.priceSell) }}
-                    </span>
-                  </div>
-                  <div class="home_pr_it_totalSold xs-flex ai-end">
-                    <span>Đã bán: {{ item.totalPay }}</span>
+                      <div class="xs-flex fw-wrap js-between">
+                        <span class="home_pr_it_sale">{{
+                          toMoney(item.priceSell)
+                        }}</span>
+
+                        <span class="home_pr_it_totalSold"
+                          >Đã bán: {{ item.totalPay }}</span
+                        >
+                      </div>
+                    </div>
+                    <div
+                      class="home_pr_it_sell xs-flex js-between fw-wrap"
+                      v-if="item.sale == 0"
+                    >
+                      <span>
+                        {{ toMoney(item.priceSell) }}
+                      </span>
+                      <span class="home_pr_it_totalSold">
+                        Đã bán: {{ item.totalPay }}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -351,9 +363,16 @@ export default {
 .home_pr_it_price {
   flex: 1 0;
 }
-.home_pr_it_sale {
+.home_pr_it_sell.discount_percent {
   color: var(--color-red);
 }
+.home_pr_it_oldPrice {
+  margin-right: 0.3rem;
+  color: var(--color-8);
+}
+/* .home_pr_it_sale {
+  color: var(--color-red);
+} */
 .home_pr_it_totalSold {
   color: var(--color-5);
 }

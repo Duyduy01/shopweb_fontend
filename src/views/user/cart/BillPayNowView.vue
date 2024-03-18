@@ -315,6 +315,7 @@ import { getCity, getDistrict, getWard } from "@/service/user/address";
 import { getUserDetail } from "@/service/user/user";
 import { getBillPayNow, addBillPayNow } from "@/service/user/bill";
 import { toMoney } from "@/service/support/exchange.js";
+import { sendBillAdded } from "@/plugins/webSocket.js";
 
 export default {
   props: ["productId", "quantity"],
@@ -401,7 +402,9 @@ export default {
         });
     },
     totalMoney() {
-      let { totalBill, shippingCost, totalBillPay } = sumMoney(this.listProduct);
+      let { totalBill, shippingCost, totalBillPay } = sumMoney(
+        this.listProduct
+      );
       this.totalBill = totalBill;
       this.shippingCost = shippingCost;
       this.totalBillPay = totalBillPay;
@@ -498,10 +501,12 @@ export default {
       this.bill.shippingCost = this.shippingCost;
       this.bill.invoiceValue = this.totalBillPay;
       let data = JSON.stringify(this.bill);
-      console.log(data);
+
       addBillPayNow(data)
         .then((res) => {
+          console.log(res);
           this.$root.$refs.userHeader.totalItemByCart();
+          sendBillAdded(res);
           self.$swal("Thành công", res.data, "success").then(function () {
             self.$router.push("/hoan-thanh-dat-hang");
           });

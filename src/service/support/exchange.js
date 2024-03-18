@@ -3,5 +3,6 @@ export function toMoney(totalprice) {
     style: "currency",
     currency: "VND",
   });
-  return formatter.format(totalprice);
+  // Thay thế ký hiệu tiền tệ VND thành ₫
+  return formatter.format(totalprice).replace("VND", "₫");
 }

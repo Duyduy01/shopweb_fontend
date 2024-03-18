@@ -10,7 +10,7 @@
                 <router-link to="/" class="p-relative">DuyShop</router-link>
               </li>
               <li class="annoucement_policy">
-                <router-link to="/" class="p-relative">Chính sách</router-link>
+                <router-link to="/" class="p-relative">8:00 am to 22:00 pm</router-link>
               </li>
             </ul>
             <!-- </div> -->
