@@ -114,8 +114,6 @@ export default {
           this.$router.push("/dang-nhap");
         } catch (error) {
           this.fullscreenLoading = false;
-          console.error(error);
-          console.error("that bai");
           await this.$swal({
             icon: "error",
             title: "Xác nhận thất bại",
@@ -141,8 +139,6 @@ export default {
           timer: 3000,
         });
       } catch (error) {
-        console.log(error);
-        console.log("that bai");
         this.fullscreenLoading = false;
         this.$swal({
           icon: "error",

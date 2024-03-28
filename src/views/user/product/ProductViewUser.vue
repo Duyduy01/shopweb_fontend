@@ -7,59 +7,61 @@
             <!-- cate -->
             <div class="prsF_child">
               <h5>Loại sản phẩm</h5>
-              <div
-                class="prsF_child_box"
-                v-for="(item, key) in listCate"
-                :key="item.id"
-              >
-                <div class="prsF_cate">
-                  <label
-                    :class="
-                      listFilter.category[0] == listKeyCate(key)[0]
-                        ? 'active'
-                        : ''
-                    "
-                    :for="'cate-' + listKeyCate(key)[0]"
-                    ><span>{{ listKeyCate(key)[1] }}</span></label
-                  >
-                  <input
-                    type="radio"
-                    name="cateId"
-                    :id="'cate-' + listKeyCate(key)[0]"
-                    class="m-fitler-active"
-                    :data-id="listKeyCate(key)[0]"
-                    data-code="cateId"
-                    @click="activeCate(listKeyCate(key)[0])"
-                    hidden
-                  />
-                </div>
-                <ul class="row">
-                  <li
-                    class="col-6"
-                    v-for="item in listCate[key]"
-                    :key="item.id"
-                  >
-                    <div class="prsF_cate prsF_cate_item w-100 h-100">
-                      <label
-                        class="xs-flex js-center ai-center ta-center w-100 h-100"
-                        :class="
-                          listFilter.category[0] == item.id ? 'active' : ''
-                        "
-                        :for="'cate-' + item.id"
-                        ><span>{{ item.categoryName }}</span></label
-                      >
-                      <input
-                        type="radio"
-                        name="cateId"
-                        :id="'cate-' + item.id"
-                        :data-id="item.id"
-                        data-code="cateId"
-                        class="m-fitler-active"
-                        @click="activeCate(item.id)"
-                        hidden
-                      />
-                    </div>
+              <div class="prsF_child_box">
+                <ul
+                  class="prsF_child_main"
+                  v-for="(item, key) in listCate"
+                  :key="item.id"
+                >
+                  <li class="prsF_cate">
+                    <label
+                      :class="
+                        listFilter.category[0] == listKeyCate(key)[0]
+                          ? 'active'
+                          : ''
+                      "
+                      :for="'cate-' + listKeyCate(key)[0]"
+                      ><span>{{ listKeyCate(key)[1] }}</span></label
+                    >
+                    <input
+                      type="radio"
+                      name="cateId"
+                      :id="'cate-' + listKeyCate(key)[0]"
+                      class="m-fitler-active"
+                      :data-id="listKeyCate(key)[0]"
+                      data-code="cateId"
+                      @click="activeCate(listKeyCate(key)[0])"
+                      hidden
+                    />
                   </li>
+                  <ul class="row">
+                    <li
+                      class="col-6"
+                      v-for="item in listCate[key]"
+                      :key="item.id"
+                    >
+                      <div class="prsF_cate prsF_cate_item w-100 h-100">
+                        <label
+                          class="xs-flex js-center ai-center ta-center w-100 h-100"
+                          :class="
+                            listFilter.category[0] == item.id ? 'active' : ''
+                          "
+                          :for="'cate-' + item.id"
+                          ><span>{{ item.categoryName }}</span></label
+                        >
+                        <input
+                          type="radio"
+                          name="cateId"
+                          :id="'cate-' + item.id"
+                          :data-id="item.id"
+                          data-code="cateId"
+                          class="m-fitler-active"
+                          @click="activeCate(item.id)"
+                          hidden
+                        />
+                      </div>
+                    </li>
+                  </ul>
                 </ul>
               </div>
             </div>
@@ -183,7 +185,7 @@
           </div>
         </div>
         <div class="products_main xs-flex fd-column w-100" id="products_main">
-          <div class="xs-flex js-flex-end">
+          <div class="xs-flex js-flex-end" ref="selectWrapper">
             <div class="prsM_select p-relative xs-none lg-block">
               <v-select
                 class="prsM_select_box w-100"
@@ -213,7 +215,7 @@
           </div>
           <!-- PRODUCT -->
           <div class="main_wrapper p-relative flex-1">
-            <product-loader :isLoaded="isLoaded"></product-loader>
+            <product-loader :isLoaded="isLoaded" ref="child"></product-loader>
             <!-- <template v-if="loaded"> -->
             <!-- <div v-show="loaded"> -->
             <div class="col-12" v-if="listProduct.length == 0">
@@ -230,7 +232,7 @@
                     <router-link :to="'/chi-tiet-san-pham/' + e.id">
                       <div class="prsM_it_pic p-relative">
                         <img
-                          class="single-gallery-image"
+                          class="p-absolute top-0 left-0 bottom-0"
                           :src="e.img"
                           :alt="e.productName"
                           loading="lazy"
@@ -323,9 +325,17 @@
 </template>
 
 <script>
+import {
+  ref,
+  reactive,
+  computed,
+  watch,
+  onMounted,
+  getCurrentInstance,
+} from "@vue/composition-api";
+import { useQuery } from "vue-query";
 import { filterProduct, filterTotalPage } from "@/service/user/product";
 import { getAllCate } from "@/service/user/category";
-import { getAllBrand } from "@/service/admin/brand";
 import { getAllSpe, getTypeSpe } from "@/service/admin/speciality";
 import { toMoney } from "@/service/support/exchange.js";
 import vSelect from "vue-select";
@@ -339,13 +349,218 @@ export default {
     ProductLoader,
   },
   props: ["cateId"],
+  // setup(props, context) {
+  //   const instance = getCurrentInstance();
+  //   const router = instance.proxy.$router;
+  //   const cateId = ref(props.cateId);
+
+  //   const data = reactive({
+  //     listProduct: [],
+  //     // cate
+  //     listCate: {},
+  //     //specaility
+  //     listAllSpe: {},
+  //     listAllColor: [],
+  //     listAllSize: [],
+  //     listNameSpe: [],
+  //     //specaility
+  //     banner: "",
+  //     listFilter: {
+  //       category: [],
+  //       brand: [],
+  //       sort: [1],
+  //       page: [1],
+  //       limit: [32],
+  //     },
+  //     //loader
+  //     isLoaded: false,
+  //     heightLoaded: "",
+  //     //pagination
+  //     totalPage: 1,
+  //     sort: { value: "1", label: "Mới Nhất" },
+  //     options: [
+  //       { value: "1", label: "Mới Nhất" },
+  //       { value: "2", label: "Bán chạy nhất" },
+  //       { value: "3", label: "Giá từ cao tới thấp" },
+  //       { value: "4", label: "Giá từ thấp tới cao" },
+  //     ],
+  //     dislike: '<i class="far fa-heart"></i>',
+  //     like: '<i class="fas fa-heart" style="color: var(--color-favorite)"></i>',
+  //   });
+  //   // const isLoaded = ref(false);
+
+  //   const getCateId = computed(() => props.cateId);
+  //   // const loaded = computed(() => data.isLoaded);
+
+  //   watch(getCateId, (newValue) => {
+  //     if (newValue > 0) {
+  //       data.listFilter.category = [newValue];
+  //     } else {
+  //       data.listFilter.category = [];
+  //     }
+  //     data.listFilter.page = [1];
+  //     callFilter(); // Gọi hàm callFilter từ setup
+  //     window.scrollTo(0, 0);
+  //   });
+
+  //   useQuery(
+  //     "getAllCate",
+  //     () =>
+  //       getAllCate().then((res) => {
+  //         data.listCate = res;
+  //       }),
+  //       {
+  //         // staleTime: 5000,
+  //         cacheTime: 5000,
+  //         onSuccess: (data) => {
+  //           console.log(data)
+  //           data.listCate = data;
+  //         },
+  //       }
+  //   );
+  //   useQuery("getAllSpe", () =>
+  //     getAllSpe().then((res) => {
+  //       data.listAllSpe = res;
+  //       let keyColor = "Màu sắc";
+  //       let keySize = "Kích thước";
+  //       data.listAllColor = res[keyColor];
+  //       data.listAllSize = res[keySize];
+  //       delete data.listAllSpe[keyColor];
+  //       delete data.listAllSpe[keySize];
+  //     })
+  //   );
+  //   useQuery("getTypeSpe", () =>
+  //     getTypeSpe().then((res) => {
+  //       res.forEach((e) => {
+  //         data.listFilter[e] = [];
+  //       });
+  //     })
+  //   );
+
+  //   onMounted(() => {
+  //     getHeightLoaded(context);
+  //     callFilter();
+  //   });
+
+  //   function getHeightLoaded(context) {
+  //     data.heightLoaded =
+  //       window.innerWidth > 991
+  //         ? context.refs.child.getHeight() +
+  //           context.refs.selectWrapper.offsetHeight
+  //         : context.refs.child.getHeight();
+  //   }
+
+  //   // cate
+  //   function activeCate(e) {
+  //     let cateId = e;
+  //     router.push(`/san-pham/${cateId}`).catch((error) => {
+  //       if (error.name != "NavigationDuplicated") {
+  //         throw error;
+  //       }
+  //       if (e == 0) {
+  //         checkCateActive();
+  //       }
+  //     });
+  //   }
+
+  //   // spe
+  //   function activeSpe(key, speId, labelActiveId) {
+  //     // console.log(key);
+  //     // console.log(speId);
+  //     // console.log(labelActiveId);
+  //     let labelActive = document.getElementById(labelActiveId);
+
+  //     let checkActive = event.srcElement.checked;
+
+  //     if (checkActive) {
+  //       labelActive.classList.add("active");
+  //       data.listFilter[key].push(speId);
+  //     } else {
+  //       labelActive.classList.remove("active");
+  //       // this.listFilter[key].pop(colorId);
+  //       data.listFilter[key] = data.listFilter[key].filter((e) => e != speId);
+  //     }
+  //     // console.log(this.listFilter);
+  //     data.listFilter.page = [1];
+  //     callFilter();
+  //   }
+
+  //   function listKeyCate(key) {
+  //     let keys = key.split(",");
+  //     return keys;
+  //   }
+
+  //   function callFilter() {
+  //     data.isLoaded = false;
+  //     document.getElementById("products_main").style.height =
+  //       data.heightLoaded + "px";
+  //     let dataSent = JSON.stringify(data.listFilter);
+  //     // console.log(data.listFilter);
+  //     Promise.all([filterTotalPage(dataSent), filterProduct(dataSent)])
+  //       .then(([totalPageRes, productRes]) => {
+  //         data.totalPage = +totalPageRes;
+  //         data.listProduct = productRes;
+  //         // console.log(data.listProduct);
+  //         handleLoad();
+  //         // this.getTotalPage;
+  //         window.scrollTo(0, 0);
+  //       })
+  //       .catch((error) => {
+  //         // console.error("Error occurred:", error);
+  //         handleLoad();
+  //       });
+  //   }
+
+  //   function checkCateActive() {
+  //     if (cateId.value != 0) {
+  //       data.listFilter.category = [cateId.value];
+  //     }
+  //   }
+
+  //   function handleCurrentChange(val) {
+  //     data.listFilter.page = [val];
+  //     callFilter();
+  //   }
+
+  //   function sortFilter() {
+  //     data.listFilter.sort = [data.sort.value];
+  //     data.listFilter.page = [1];
+  //     callFilter();
+  //   }
+
+  //   function handleLoad() {
+  //     // Kiểm tra khi phần tử hoặc component đã load xong
+  //     setTimeout(() => {
+  //       data.isLoaded = true;
+  //       window.scrollTo(0, 0);
+  //       document.getElementById("products_main").style.height = "unset";
+  //     }, 700);
+  //   }
+
+  //   async function favoriteProduct(product) {
+  //     let value = this.$root.$refs.userHeader.favoriteProductHeader(product.id);
+  //     value.then((res) => {
+  //       product.favorite = res == 1 ? false : true;
+  //     });
+  //   }
+
+  //   return {
+  //     data,
+  //     toMoney,
+  //     activeCate,
+  //     activeSpe,
+  //     listKeyCate,
+  //     checkCateActive,
+  //     handleCurrentChange,
+  //     sortFilter,
+  //     favoriteProduct,
+  //   };
+  // },
   data() {
     return {
       listProduct: [],
       // cate
       listCate: {},
-      // brand
-      listBrand: [],
       //specaility
       listAllSpe: {},
       listAllColor: [],
@@ -355,13 +570,13 @@ export default {
       banner: "",
       listFilter: {
         category: [],
-        brand: [],
         sort: [1],
         page: [1],
         limit: [32],
       },
       //loader
       isLoaded: false,
+      heightLoaded: "",
       //pagination
       totalPage: 1,
       sort: { value: "1", label: "Mới Nhất" },
@@ -372,7 +587,7 @@ export default {
         { value: "4", label: "Giá từ thấp tới cao" },
       ],
       dislike: '<i class="far fa-heart"></i>',
-      like: '<i class="fas fa-heart"></i>',
+      like: '<i class="fas fa-heart" style="color: var(--color-favorite)"></i>',
     };
   },
   computed: {
@@ -399,9 +614,6 @@ export default {
     getAllCate().then((res) => {
       this.listCate = res;
     });
-    getAllBrand().then((res) => {
-      this.listBrand = res;
-    });
     getAllSpe().then((res) => {
       this.listAllSpe = res;
       let keyColor = "Màu sắc";
@@ -410,6 +622,7 @@ export default {
       this.listAllSize = res[keySize];
       delete this.listAllSpe[keyColor];
       delete this.listAllSpe[keySize];
+      console.log(123)
     });
     getTypeSpe().then((res) => {
       res.forEach((e) => {
@@ -420,10 +633,17 @@ export default {
     window.scrollTo(0, 0);
   },
   mounted() {
+    this.getHeightLoaded();
     this.callFilter();
   },
   methods: {
     toMoney,
+    getHeightLoaded() {
+      this.heightLoaded =
+        window.innerWidth > 991
+          ? this.$refs.child.getHeight() + this.$refs.selectWrapper.offsetHeight
+          : this.$refs.child.getHeight();
+    },
     // filter
     // activeFilter(code, brandId, labelBrandId) {
     //   let cateCode = code;
@@ -470,7 +690,7 @@ export default {
 
       if (checkActive) {
         labelActive.classList.add("active");
-        this.listFilter[key].push(speId);
+        this.listFilter[key].unshift(speId);
       } else {
         labelActive.classList.remove("active");
         // this.listFilter[key].pop(colorId);
@@ -486,12 +706,15 @@ export default {
     },
     callFilter() {
       this.isLoaded = false;
-      document.getElementById("products_main").style.height = "100vh";
+      document.getElementById("products_main").style.height =
+        this.heightLoaded + "px";
       let data = JSON.stringify(this.listFilter);
+      console.log(this.listFilter);
       Promise.all([filterTotalPage(data), filterProduct(data)])
         .then(([totalPageRes, productRes]) => {
           this.totalPage = +totalPageRes;
           this.listProduct = productRes;
+          console.log(this.listProduct);
           this.handleLoad();
           this.getTotalPage;
           window.scrollTo(0, 0);
@@ -519,8 +742,9 @@ export default {
       // Kiểm tra khi phần tử hoặc component đã load xong
       setTimeout(() => {
         this.isLoaded = true;
+        window.scrollTo(0, 0);
         document.getElementById("products_main").style.height = "unset";
-      }, 1000);
+      }, 700);
     },
     async favoriteProduct(product) {
       let value = this.$root.$refs.userHeader.favoriteProductHeader(product.id);
@@ -562,9 +786,9 @@ export default {
   margin: 0;
 }
 .prsF_child_box {
-  padding-top: 2rem;
+  padding: 2rem 0 3rem;
 }
-.prsF_child .prsF_child_box:last-child {
+.prsF_child_box .prsF_child_main:not(:last-child) {
   padding-bottom: 3rem;
 }
 .prsF_cate > label {
@@ -637,25 +861,27 @@ label.active > span {
   margin-bottom: 1.5rem;
 }
 .products_main {
+  overflow: hidden;
   padding-left: 0;
 }
-.products_main .main_wrapper {
+/* .products_main .main_wrapper {
   overflow: hidden;
-}
+} */
 .products_main .prsM_ctnr {
   margin: 0 -0.4rem;
 }
 .products_main .prsM_box {
   padding: 0.7rem 0.4rem;
 }
+.prsM_it_pic {
+  padding-top: 100%;
+  overflow: hidden;
+}
 .prsM_item .prsM_it_pic img {
   will-change: transform;
   aspect-ratio: 1;
   transform: translateZ(0);
   transition: transform 0.6s;
-}
-.prsM_it_pic {
-  overflow: hidden;
 }
 .prsM_item:hover .prsM_it_pic img {
   transform: scale(1.1);
@@ -694,6 +920,9 @@ label.active > span {
 }
 .icon-heart {
   display: inline !important;
+}
+.icon-heart > i {
+  color: var(--color-red);
 }
 .prsM_it_fav,
 .prsM_it_review {

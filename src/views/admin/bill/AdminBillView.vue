@@ -392,6 +392,7 @@ import {
   updateStatusBill,
   exportBill,
 } from "@/service/admin/bill";
+import { connectWS } from "@/plugins/webSocket.js";
 import $ from "jquery";
 import { mapGetters } from "vuex";
 
@@ -449,9 +450,6 @@ export default {
   },
   computed: {
     ...mapGetters(["getBill"]),
-    valueBill() {
-      return this.getBill;
-    },
     showInfo() {
       return $array.show(
         this.getCurrentEntries(),
@@ -476,6 +474,7 @@ export default {
     },
   },
   created() {
+    connectWS(this.$store);
     getAllBill().then((res) => {
       this.entries = res;
       this.paginateData(this.entries);

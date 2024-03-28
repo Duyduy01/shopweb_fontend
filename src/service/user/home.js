@@ -34,6 +34,6 @@ export async function getAllProductByOption(option) {
     );
     return res.data.data;
   } catch (error) {
-    console.log(error);
+    throw new Error(error);
   }
 }

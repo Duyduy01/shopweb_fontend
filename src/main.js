@@ -1,4 +1,6 @@
 import Vue from "vue";
+import VueCompositionAPI from "@vue/composition-api";
+import { VueQueryPlugin } from "vue-query";
 import "./plugins/fontawesome";
 import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
@@ -18,6 +20,8 @@ import "./assets/css/style.css";
 import "./assets/css/color.css";
 import "./plugins/webSocket.js";
 
+Vue.use(VueCompositionAPI);
+Vue.use(VueQueryPlugin);
 Vue.use(VueSweetalert2);
 Vue.use(VueAxios, axios, Vuelidate);
 Vue.use(CKEditor);

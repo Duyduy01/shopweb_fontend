@@ -197,7 +197,7 @@ export default {
       this.listBrand = res;
       console.log(this.listBrand);
     });
-    console.log(this.id)
+    console.log(this.id);
     this.callApi(this.id);
     this.callApiTotal(this.id);
   },
@@ -222,7 +222,7 @@ export default {
         const res = await getTotalByBrand(this.dataApi);
         this.totalPage = res;
       } catch (error) {
-        console.error(error);
+        throw new Error(error);
       }
     },
     async callApi(brandId) {
@@ -234,7 +234,7 @@ export default {
         const res = await getProductByBrand(this.dataApi);
         this.listProduct = res;
       } catch (error) {
-        console.error(error);
+        throw new Error(error);
       }
     },
     handleCurrentChange(val) {

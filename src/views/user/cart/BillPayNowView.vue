@@ -315,7 +315,7 @@ import { getCity, getDistrict, getWard } from "@/service/user/address";
 import { getUserDetail } from "@/service/user/user";
 import { getBillPayNow, addBillPayNow } from "@/service/user/bill";
 import { toMoney } from "@/service/support/exchange.js";
-import { sendBillAdded } from "@/plugins/webSocket.js";
+import { disconnectWS, sendBillAdded } from "@/plugins/webSocket.js";
 
 export default {
   props: ["productId", "quantity"],
@@ -506,7 +506,12 @@ export default {
         .then((res) => {
           console.log(res);
           this.$root.$refs.userHeader.totalItemByCart();
-          sendBillAdded(res);
+          setTimeout(() => {
+            sendBillAdded(res);
+            setTimeout(() => {
+              disconnectWS();
+            }, 2000);
+          }, 5000);
           self.$swal("Thành công", res.data, "success").then(function () {
             self.$router.push("/hoan-thanh-dat-hang");
           });

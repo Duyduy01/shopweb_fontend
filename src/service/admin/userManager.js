@@ -10,8 +10,7 @@ export async function getAllUserManu() {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
   // return new Promise((res, rej) => {
   //   var config = {
@@ -84,8 +83,7 @@ export async function updateUserManager(data) {
     );
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
   // return new Promise((res, rej) => {
   //   var config = {

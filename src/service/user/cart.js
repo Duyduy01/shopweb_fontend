@@ -12,8 +12,7 @@ export async function getAll() {
     console.log(res.data.data);
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -48,8 +47,7 @@ export async function addCartIntoLocal(data, token) {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -88,8 +86,7 @@ export async function changQuantity(data) {
     );
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 

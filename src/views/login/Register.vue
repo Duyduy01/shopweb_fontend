@@ -265,8 +265,6 @@ export default {
           this.$router.push(router);
         } catch (error) {
           this.fullscreenLoading = false;
-          console.log(error);
-          console.log("that bai");
           await this.$swal({
             icon: "error",
             title: "Đăng ký lỗi",

@@ -52,8 +52,7 @@ export async function getAllFavorite(page) {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 

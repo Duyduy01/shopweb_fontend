@@ -11,7 +11,6 @@ export async function verifyEmail(data) {
     });
     return res.data.status;
   } catch (error) {
-    console.error(error);
     const rej = "Verify code failed";
     throw rej;
   }
@@ -27,7 +26,6 @@ export async function sendToCode(data) {
     console.log(res.data.status);
     return res.data.status;
   } catch (error) {
-    console.error(error);
     const rej = "Sending code failed";
     throw rej;
   }
@@ -43,7 +41,6 @@ export async function registerUserNew(data) {
     console.log(res.data.status);
     return res.data.status;
   } catch (error) {
-    console.error(error);
     const rej = "Email already exists";
     throw rej;
   }

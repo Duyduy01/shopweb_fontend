@@ -3,7 +3,6 @@ import { getHost } from "@/service/get-host";
 var axios = require("axios");
 let url = getHost();
 
-
 export async function getAllBrand() {
   try {
     const res = await axios.get(url + "/api/v1/user/brand", {
@@ -13,8 +12,7 @@ export async function getAllBrand() {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -27,8 +25,7 @@ export async function getProductByBrand(data) {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -39,10 +36,9 @@ export async function getTotalByBrand(data) {
         "Content-Type": "application/json",
       },
     });
-    console.log(res.data.data)
+    console.log(res.data.data);
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }

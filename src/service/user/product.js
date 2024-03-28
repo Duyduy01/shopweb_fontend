@@ -10,8 +10,7 @@ export async function getAllProduct() {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -48,7 +47,7 @@ export async function filterTotalPage(data) {
     );
     return res.data.data;
   } catch (error) {
-    console.log(error);
+    throw new Error(error);
   }
   // return new Promise((res, rej) => {
   //   var config = {

@@ -123,7 +123,11 @@
                         type="button"
                         class="btn btn-outline-secondary"
                         v-if="b.status == -2"
-                        @click="$router.push('/chi-tiet-san-pham/' + b.listDetail[0].productId)"
+                        @click="
+                          $router.push(
+                            '/chi-tiet-san-pham/' + b.listDetail[0].productId
+                          )
+                        "
                       >
                         Mua lại
                       </button>
@@ -284,7 +288,7 @@ export default {
   components: {},
   created() {
     this.getAllBill(1);
-    console.log(this.billIndex)
+    console.log(this.billIndex);
     //tong page
     getTotalByStatus(this.billIndex).then((res) => {
       this.totalPage = res;
@@ -298,8 +302,7 @@ export default {
         this.listBill = await getAllBillByStatus(this.billIndex, page);
         console.log(this.listBill);
       } catch (error) {
-        console.error(error);
-        throw error;
+        throw new Error(error);
       }
     },
     //pagination
@@ -350,7 +353,7 @@ export default {
       }).then((result) => {
         if (result.isConfirmed) {
           cancelBill(bill.billId)
-          .then((res) => {
+            .then((res) => {
               bill.status = -2;
               bill.checkBill = false;
               bill.staffId = res.data;
@@ -361,7 +364,7 @@ export default {
         }
       });
     },
-    
+
     reviewProduct(billId, productId, product) {
       this.product = product;
       console.log(this.product.productName);

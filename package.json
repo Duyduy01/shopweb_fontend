@@ -35,6 +35,7 @@
     "stompjs": "^2.3.3",
     "vue": "^2.6.14",
     "vue-axios": "^3.4.1",
+    "vue-query": "^1.26.0",
     "vue-router": "^3.5.1",
     "vue-select": "^3.20.2",
     "vue-slick-carousel": "^1.0.6",

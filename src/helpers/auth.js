@@ -11,8 +11,7 @@ export async function login(credential) {
     });
     return res.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 

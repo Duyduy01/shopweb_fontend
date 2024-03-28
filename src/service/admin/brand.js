@@ -115,7 +115,6 @@ export async function deleteBrand(id) {
     console.log(res.data);
     return res.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }

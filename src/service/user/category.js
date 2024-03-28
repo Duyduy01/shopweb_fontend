@@ -20,26 +20,6 @@ export async function getAllCate() {
     res.data.data = Object.assign({}, ...sortedCateArray);
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
-  // return new Promise((res, rej) => {
-  //   var config = {
-  //     method: 'get',
-  //     url: url+'/api/v2/user/category',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //   };
-  //   axios(config)
-  //     .then(function (response) {
-
-  //       res(response.data.data);
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //       rej("Wrong email or password");
-  //     });
-
-  // })
 }

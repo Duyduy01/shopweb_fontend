@@ -14,7 +14,6 @@ export async function getAllBannerByCode(code) {
     const response = await axios(config);
     return response.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }

@@ -37,7 +37,11 @@
           <div class="home_product_item p-relative">
             <router-link :to="'/chi-tiet-san-pham/' + item.id">
               <div class="home_pr_it_pic p-relative">
-                <img :src="item.img" :alt="item.productName" />
+                <img
+                  class="p-absolute top-0 left-0 bottom-0"
+                  :src="item.img"
+                  :alt="item.productName"
+                />
                 <div
                   class="home_pr_it_review p-absolute"
                   v-if="item.rate > 0 && item.totalRate > 0"
@@ -124,7 +128,7 @@ export default {
       // listProductOption: [],
       countIndex: 0,
       dislike: '<i class="far fa-heart"></i>',
-      like: '<i class="fas fa-heart"></i>',
+      like: '<i class="fas fa-heart" style="color: var(--color-favorite)"></i>',
       //settings products slide
       settings: {
         dots: false,
@@ -303,14 +307,15 @@ export default {
   transition-timing-function: cubic-bezier(0.4, 0, 0.6, 1);
   transition-duration: 0.2s;
 } */
+.home_pr_it_pic {
+  padding-top: 100%;
+  overflow: hidden;
+}
 .home_product_wrapper .home_pr_it_pic img {
   will-change: transform;
   aspect-ratio: 1;
   transform: translateZ(0);
   transition: transform 0.6s;
-}
-.home_pr_it_pic {
-  overflow: hidden;
 }
 .home_product_item:hover .home_pr_it_pic img {
   transform: scale(1.1);

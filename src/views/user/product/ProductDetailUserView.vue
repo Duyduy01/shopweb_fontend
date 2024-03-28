@@ -508,7 +508,7 @@ export default {
           icon: "success",
           title: "Thành công",
           text: "Thêm vào giỏ hàng thành công",
-          timer: 1500,
+          // timer: 1500,
         });
       }
     },

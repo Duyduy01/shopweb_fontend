@@ -30,8 +30,7 @@ export async function getSpeById(id) {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -44,8 +43,7 @@ export async function getParentSpeById(id) {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -58,8 +56,7 @@ export async function getAllChildSpeByParentId(id) {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    return error;
+    throw new Error(error);
   }
 }
 
@@ -73,8 +70,7 @@ export async function getTypeSpe() {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
   // return new Promise((res, rej) => {
   //   var config = {

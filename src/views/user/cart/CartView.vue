@@ -229,7 +229,7 @@ export default {
           listProduct: JSON.parse(listProducts),
         };
         data = JSON.stringify(data);
-        console.log(data)
+        console.log(data);
         getAllNologin(data)
           .then((res) => {
             this.listProduct = res;
@@ -258,7 +258,7 @@ export default {
           console.log(res);
           this.$root.$refs.userHeader.totalItemByCart();
         } catch (error) {
-          console.error(error);
+          throw new Error(error);
         }
       } else {
         this.$store.commit("CHANGE_QUANTITY", product);
@@ -295,7 +295,9 @@ export default {
     },
     // tính tiền
     totalMoney() {
-      let { totalBill, shippingCost, totalBillPay } = sumMoney(this.listProduct);
+      let { totalBill, shippingCost, totalBillPay } = sumMoney(
+        this.listProduct
+      );
       this.totalBill = totalBill;
       this.shippingCost = shippingCost;
       this.totalBillPay = totalBillPay;

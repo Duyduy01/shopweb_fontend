@@ -1,4 +1,6 @@
 import { getHost } from "@/service/get-host";
+import store from "@/store/index.js";
+import { disconnectWS, connectWS } from "@/plugins/webSocket.js";
 
 var axios = require("axios");
 let url = getHost();
@@ -10,11 +12,10 @@ export async function addBill(data) {
         "Content-Type": "application/json",
       },
     });
-    console.log(res.data.data)
+    connectWS(store);
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -51,8 +52,7 @@ export async function getAllBillByStatus(status, page) {
     );
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -66,8 +66,7 @@ export async function getTotalByStatus(status) {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -81,8 +80,7 @@ export async function cancelBill(id) {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -135,8 +133,7 @@ export async function addReviewProduct(data) {
     });
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 // pay now
@@ -151,8 +148,7 @@ export async function getBillPayNow(data) {
     console.log(res.data);
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }
 
@@ -163,9 +159,9 @@ export async function addBillPayNow(data) {
         "Content-Type": "application/json",
       },
     });
+    connectWS(store);
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
 }

@@ -219,7 +219,7 @@ export default {
             console.log(res);
             self.$store.commit("REMOVE_CART");
           } catch (error) {
-            console.error(error);
+            throw new Error(error);
           }
         }
       }

@@ -315,7 +315,7 @@ export default {
 <style scoped lang="css">
 @import url("@/assets/user/css/home.css");
 .section-mg {
-  margin-top: 8.4rem;
+  margin-top: 3rem;
 }
 .home_title {
   margin-bottom: 1.2rem;
@@ -441,6 +441,9 @@ export default {
 /* home featured */
 /*------------------------------------*/
 @media only screen and (min-width: 576px) {
+  .section-mg {
+    margin-top: 5rem;
+  }
   .home_intro_wrapper {
     grid-column-gap: 1.2rem;
     grid-row-gap: 1.2rem;
@@ -478,6 +481,9 @@ export default {
   }
 }
 @media only screen and (min-width: 992px) {
+  .section-mg {
+    margin-top: 8.4rem;
+  }
   .home {
     margin-bottom: 5.6rem;
   }

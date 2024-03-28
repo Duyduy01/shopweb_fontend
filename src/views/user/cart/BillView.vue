@@ -320,7 +320,7 @@ import { getCity, getDistrict, getWard } from "@/service/user/address";
 import { getUserDetail } from "@/service/user/user";
 import { addBill } from "@/service/user/bill";
 import { toMoney } from "@/service/support/exchange.js";
-import { sendBillAdded } from "@/plugins/webSocket.js";
+import { disconnectWS, sendBillAdded } from "@/plugins/webSocket.js";
 
 export default {
   data() {
@@ -509,11 +509,16 @@ export default {
       this.bill.shippingCost = this.shippingCost;
       this.bill.invoiceValue = this.totalBillPay;
       let data = JSON.stringify(this.bill);
-  
+
       addBill(data)
         .then((res) => {
           this.$root.$refs.userHeader.totalItemByCart();
-          sendBillAdded(res);
+          setTimeout(() => {
+            sendBillAdded(res);
+            setTimeout(() => {
+              disconnectWS();
+            }, 2000);
+          }, 5000);
           self.$swal("Thành công", res.data, "success").then(function () {
             self.$router.push("/hoan-thanh-dat-hang");
           });

@@ -29,8 +29,7 @@ export async function getAllParentCate() {
     });
     return res.data.data;
   } catch (error) {
-    console.log(error);
-    throw error;
+    throw new Error(error);
   }
   // return new Promise((res, rej) => {
   //   var config = {
@@ -130,8 +129,7 @@ export async function getAllCateInaddProduct() {
     res.data.data = Object.assign({}, ...sortedCateArray);
     return res.data.data;
   } catch (error) {
-    console.error(error);
-    throw error;
+    throw new Error(error);
   }
   // return new Promise((res, rej) => {
   //   var config = {
