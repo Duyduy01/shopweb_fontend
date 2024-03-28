@@ -1,5 +1,5 @@
 
 export function getHost() {
-    
-    return "http://localhost:8082"
+    return "https://app-s-e4cfd09a3e52.herokuapp.com"
+    // return "http://localhost:8082"
 }
